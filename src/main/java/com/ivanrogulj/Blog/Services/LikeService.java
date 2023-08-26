@@ -7,6 +7,8 @@ import com.ivanrogulj.Blog.Repositories.LikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LikeService {
 
@@ -22,7 +24,7 @@ public class LikeService {
     }
 
     public Like likePost(Long userId, Long postId) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUserById(userId).orElse(null);
         Post post = postService.getPostById(postId);
 
         if (user != null && post != null) {
@@ -37,5 +39,9 @@ public class LikeService {
 
     public void unlikePost(Long likeId) {
         likeRepository.deleteById(likeId);
+    }
+
+    public List<Like> getLikesForUser(Long userId) {
+        return likeRepository.findByUserId(userId);
     }
 }

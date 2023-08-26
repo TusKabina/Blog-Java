@@ -1,26 +1,24 @@
 package com.ivanrogulj.Blog.Entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
-@Table(name = "likes")
-public class Like {
+@Table(name = "tags")
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
+    @OneToMany(mappedBy = "tag")
     @JsonManagedReference
-    private Post post;
-
+    private List<PostTag> postTags;
 }

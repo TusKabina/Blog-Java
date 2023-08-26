@@ -30,7 +30,7 @@ public class PostService {
     }
 
     public Post createPost(Post post, Long authorId) {
-        User author = userService.getUserById(authorId);
+        User author = userService.getUserById(authorId).orElse(null);
         if (author != null) {
             post.setAuthor(author);
             post.setCreationDate(LocalDateTime.now());
