@@ -35,6 +35,16 @@ public class PostController {
         }
     }
 
+    @GetMapping("/all/{authorId}")
+    public ResponseEntity<List<Post>> getPostByAuthorId(@PathVariable Long authorId) {
+        List<Post> posts = postService.getPostByUser(authorId);
+        if (posts != null) {
+            return ResponseEntity.ok(posts);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/{authorId}")
     public ResponseEntity<Post> createPost(@RequestBody Post post, @PathVariable Long authorId) {
         Post newPost = postService.createPost(post, authorId);

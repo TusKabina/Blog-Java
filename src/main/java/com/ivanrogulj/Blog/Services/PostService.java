@@ -28,6 +28,9 @@ public class PostService {
     public Post getPostById(Long id) {
         return postRepository.findById(id).orElse(null);
     }
+    public List<Post> getPostByUser(Long id) {
+        return postRepository.getPostsByAuthorId(id);
+    }
 
     public Post createPost(Post post, Long authorId) {
         User author = userService.getUserById(authorId).orElse(null);
