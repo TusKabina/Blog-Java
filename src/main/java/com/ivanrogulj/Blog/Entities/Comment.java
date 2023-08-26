@@ -1,5 +1,6 @@
 package com.ivanrogulj.Blog.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +20,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+   // @JsonManagedReference
     private Post post;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    //@JsonManagedReference
+    private User user;
     private LocalDateTime creationDate;
 }

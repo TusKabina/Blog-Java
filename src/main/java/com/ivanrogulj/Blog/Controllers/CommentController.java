@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/api")
 public class CommentController {
 
     private final CommentService commentService;
@@ -21,10 +21,18 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @PostMapping
-    public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
-        Comment createdComment = commentService.createComment(comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
+    @PostMapping("/posts/{postId}/comments")
+    public ResponseEntity<Comment> createComment(
+            @PathVariable Long postId,
+            @RequestParam Long userId,
+            @RequestBody Comment comment) {
+
+        Comment createdComment = commentService.createComment(comment, userId, postId);
+        if (createdComment != null) {
+            return ResponseEntity.ok(createdComment);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/post/{postId}")
@@ -33,20 +41,20 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 
-    @GetMapping("/{commentId}")
+    @GetMapping("comments/{commentId}")
     public ResponseEntity<Comment> getCommentById(@PathVariable Long commentId) {
         Optional<Comment> comment = commentService.getCommentById(commentId);
         return comment.map(c -> ResponseEntity.status(HttpStatus.OK).body(c))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @PutMapping("/{commentId}")
+    @PutMapping("comments/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable Long commentId, @RequestBody Comment updatedComment) {
         Comment comment = commentService.updateComment(commentId, updatedComment);
         return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
