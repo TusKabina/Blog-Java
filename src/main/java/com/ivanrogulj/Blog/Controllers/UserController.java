@@ -1,8 +1,11 @@
 package com.ivanrogulj.Blog.Controllers;
 import com.ivanrogulj.Blog.DTO.UserDTO;
+import com.ivanrogulj.Blog.DTO.UserLoginRequest;
+import com.ivanrogulj.Blog.DTO.UserRegistrationRequest;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.Services.EntityToDtoMapper;
 import com.ivanrogulj.Blog.Services.UserService;
+import com.ivanrogulj.Blog.Utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +20,13 @@ public class UserController {
     private final UserService userService;
     private final EntityToDtoMapper entityToDtoMapper;
 
+    private final JwtUtil jwtUtil;
+
     @Autowired
-    public UserController(UserService userService, EntityToDtoMapper entityToDtoMapper) {
+    public UserController(UserService userService, EntityToDtoMapper entityToDtoMapper, JwtUtil jwtUtil) {
         this.userService = userService;
         this.entityToDtoMapper = entityToDtoMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("")
@@ -28,16 +34,28 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-//        User user = userService.getUserById(id);
-//        if (user != null) {
-//            return ResponseEntity.ok(user);
+//    @PostMapping("/register")
+//    public ResponseEntity<String> registerUser(@RequestBody UserRegistrationRequest request) {
+//        User registeredUser = userService.registerUser(request);
+//
+//        if (registeredUser != null) {
+//            return ResponseEntity.ok("User registered successfully");
 //        } else {
-//            return ResponseEntity.notFound().build();
+//            return ResponseEntity.badRequest().body("User registration failed");
 //        }
 //    }
-
+//
+//    @PostMapping("/login")
+//    public ResponseEntity<String> loginUser(@RequestBody UserLoginRequest request) {
+//        User user = userService.loginUser(request.getUsername(), request.getPassword());
+//
+//        if (user != null) {
+//            String token = jwtUtil.generateToken(user.getUsername());
+//            return ResponseEntity.ok(token);
+//        } else {
+//            return ResponseEntity.badRequest().body("Invalid credentials");
+//        }
+//    }
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserWithLikes(@PathVariable Long id) {
         Optional<User> userOptional = userService.getUserById(id);
