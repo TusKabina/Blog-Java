@@ -8,6 +8,7 @@ import com.ivanrogulj.Blog.Services.UserService;
 import com.ivanrogulj.Blog.Utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.Optional;
@@ -57,6 +58,7 @@ public class UserController {
 //        }
 //    }
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getUserWithLikes(@PathVariable Long id) {
         Optional<User> userOptional = userService.getUserById(id);
         if (userOptional.isPresent()) {

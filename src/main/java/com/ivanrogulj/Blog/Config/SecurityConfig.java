@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig  {
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -34,23 +36,18 @@ public class SecurityConfig  {
         this.userService = userService;
     }
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/auth/register").permitAll()
-                        .requestMatchers("/api/**").hasAnyRole("USER","ADMIN")
-                        .anyRequest().authenticated()
-
-
-                )
-                .csrf().disable()
-                .addFilterBefore(new AuthenticationFilter(),
-                        UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        return http.build();
+    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception
+    {
+        return http.csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers("/auth/reagister","/auth/login").permitAll()
+                .and()
+                .authorizeHttpRequests().requestMatchers("/api/**")
+                .authenticated().and().formLogin().and().build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
