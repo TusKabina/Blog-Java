@@ -3,6 +3,8 @@ package com.ivanrogulj.Blog.Services;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +54,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-
+    public User getLoggedInUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUsername = auth.getName();
+        return userRepository.findByUsername(loggedInUsername);
+    }
 
 //    public User registerUser(UserRegistrationRequest request) {
 //        User user = new User();

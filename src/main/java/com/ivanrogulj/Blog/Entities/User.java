@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,8 +45,6 @@ public class User {
     private Set<Role> roles;
 
 
-//    public void setRoles(Set<Role> roles) {
-//        this.roles = roles;
-//    }
+
 
 }
