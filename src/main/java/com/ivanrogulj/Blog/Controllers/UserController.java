@@ -1,9 +1,9 @@
 package com.ivanrogulj.Blog.Controllers;
 import com.ivanrogulj.Blog.DTO.UserDTO;
-import com.ivanrogulj.Blog.DTO.UserLoginRequest;
-import com.ivanrogulj.Blog.DTO.UserRegistrationRequest;
+import com.ivanrogulj.Blog.Entities.Like;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.Services.EntityToDtoMapper;
+import com.ivanrogulj.Blog.Services.LikeService;
 import com.ivanrogulj.Blog.Services.UserService;
 import com.ivanrogulj.Blog.Utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +13,33 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
+    private final LikeService likeService;
     private final EntityToDtoMapper entityToDtoMapper;
 
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public UserController(UserService userService, EntityToDtoMapper entityToDtoMapper, JwtUtil jwtUtil) {
+    public UserController(UserService userService, LikeService likeService, EntityToDtoMapper entityToDtoMapper, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.likeService = likeService;
         this.entityToDtoMapper = entityToDtoMapper;
         this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserDTO> getAllUserDTOs() {
+        List<User> users = userService.getAllUsers();
+        return users.stream()
+                .map(user -> entityToDtoMapper.convertUserToUserDTO(user, likeService.getLikesForUser(user.getId())))
+                .collect(Collectors.toList());
     }
 
 
@@ -42,7 +48,8 @@ public class UserController {
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
         Optional<User> userOptional = userService.getUserById(id);
         if (userOptional.isPresent()) {
-            UserDTO userDTO = entityToDtoMapper.convertUserToUserDTO(userOptional.get());
+            List<Like> likes = likeService.getLikesForUser(id);
+            UserDTO userDTO = entityToDtoMapper.convertUserToUserDTO(userOptional.get(), likes);
             return ResponseEntity.ok(userDTO);
         } else {
             return ResponseEntity.notFound().build();

@@ -1,23 +1,21 @@
 package com.ivanrogulj.Blog.Entities;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 
+
+
 @Data
 @Entity
-@Table(name = "post_tag")
-public class PostTag {
+@Table(name = "categories")
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
+    // Constructors, getters, and setters
 }
