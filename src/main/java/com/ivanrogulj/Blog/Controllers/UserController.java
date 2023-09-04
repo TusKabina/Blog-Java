@@ -31,35 +31,15 @@ public class UserController {
     }
 
     @GetMapping("")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<String> registerUser(@RequestBody UserRegistrationRequest request) {
-//        User registeredUser = userService.registerUser(request);
-//
-//        if (registeredUser != null) {
-//            return ResponseEntity.ok("User registered successfully");
-//        } else {
-//            return ResponseEntity.badRequest().body("User registration failed");
-//        }
-//    }
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<String> loginUser(@RequestBody UserLoginRequest request) {
-//        User user = userService.loginUser(request.getUsername(), request.getPassword());
-//
-//        if (user != null) {
-//            String token = jwtUtil.generateToken(user.getUsername());
-//            return ResponseEntity.ok(token);
-//        } else {
-//            return ResponseEntity.badRequest().body("Invalid credentials");
-//        }
-//    }
+
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<UserDTO> getUserWithLikes(@PathVariable Long id) {
+   // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
         Optional<User> userOptional = userService.getUserById(id);
         if (userOptional.isPresent()) {
             UserDTO userDTO = entityToDtoMapper.convertUserToUserDTO(userOptional.get());
@@ -69,6 +49,7 @@ public class UserController {
         }
     }
     @PostMapping("")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User newUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);

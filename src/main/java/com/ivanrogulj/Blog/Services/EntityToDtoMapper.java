@@ -24,7 +24,7 @@ public class EntityToDtoMapper {
         userDTO.setUsername(user.getUsername());
         userDTO.setFullName(user.getFullName());
 
-        List<Like> likes = likeService.getLikesForUser(user.getId()); // Make sure to inject LikeService
+        List<Like> likes = likeService.getLikesForUser(user.getId());
         userDTO.setLikes(likes);
 
         return userDTO;

@@ -54,7 +54,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest signUpDto) {
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
-            return new ResponseEntity<>("Username is already exist!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Username already exist!", HttpStatus.BAD_REQUEST);
         }
         User user = new User();
         user.setUsername(signUpDto.getUsername());

@@ -1,5 +1,6 @@
 package com.ivanrogulj.Blog.Services;
 
+import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,22 +61,5 @@ public class UserService {
         return userRepository.findByUsername(loggedInUsername);
     }
 
-//    public User registerUser(UserRegistrationRequest request) {
-//        User user = new User();
-//        user.setUsername(request.getUsername());
-//        user.setPassword(passwordEncoder.encode(request.getPassword()));
-//        user.setFullName(request.getFullName());
-//
-//        return userRepository.save(user);
-//    }
-//
-//    public User loginUser(String username, String password) {
-//        User user = userRepository.findByUsername(username);
-//
-//        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-//            return user;
-//        }
-//
-//        return null;
-//    }
+
 }

@@ -5,6 +5,7 @@ import com.ivanrogulj.Blog.Services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,8 +67,27 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deletePost(@PathVariable Long id, Authentication authentication) {
+        if (isAuthorizedToDelete(authentication, id)) {
+            // Delete the post
+            postService.deletePost(id);
+            return ResponseEntity.ok("Post deleted successfully.");
+        } else {
+            // Return a 403 Forbidden response for unauthorized access
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this post.");
+        }
+    }
+
+
+    public boolean isAuthorizedToDelete(Authentication authentication, Long id) {
+        // Check if the user has the "ADMIN" role
+        Post post = postService.getPostById(id);
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+        // Check if the user is the owner of the post or is an admin
+        boolean isOwnerOrAdmin = post.getAuthor().getUsername().equals(authentication.getName()) || isAdmin;
+
+        return isOwnerOrAdmin;
     }
 }
