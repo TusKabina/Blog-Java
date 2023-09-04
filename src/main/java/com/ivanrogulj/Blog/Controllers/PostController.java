@@ -1,5 +1,6 @@
 package com.ivanrogulj.Blog.Controllers;
 
+import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 import com.ivanrogulj.Blog.Services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +28,37 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
-        Post post = postService.getPostById(id);
-        if (post != null) {
-            return ResponseEntity.ok(post);
+    public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {
+        PostDTO postDTO = postService.getPostDtoById(id);
+        if (postDTO != null) {
+            return ResponseEntity.ok(postDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/categories/{categoryId}")
+    public ResponseEntity<List<PostDTO>> getPostByCategoryId(@PathVariable Long categoryId) {
+        List<PostDTO> posts = postService.getPostsByCategory(categoryId);
+        if (posts != null) {
+            return ResponseEntity.ok(posts);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/{postId}/categories/assign/{categoryId}")
+    public ResponseEntity<PostDTO> assignCategoryToPost(@PathVariable Long postId, @PathVariable Long categoryId) {
+        PostDTO postDTO = postService.assignCategoryToPost(postId, categoryId);
+        if (postDTO != null) {
+            return ResponseEntity.ok(postDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/all/{authorId}")
-    public ResponseEntity<List<Post>> getPostByAuthorId(@PathVariable Long authorId) {
-        List<Post> posts = postService.getPostByUser(authorId);
+    public ResponseEntity<List<PostDTO>> getPostByAuthorId(@PathVariable Long authorId) {
+        List<PostDTO> posts = postService.getPostByUser(authorId);
         if (posts != null) {
             return ResponseEntity.ok(posts);
         } else {
@@ -86,8 +106,7 @@ public class PostController {
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
         // Check if the user is the owner of the post or is an admin
-        boolean isOwnerOrAdmin = post.getAuthor().getUsername().equals(authentication.getName()) || isAdmin;
 
-        return isOwnerOrAdmin;
+        return post.getAuthor().getUsername().equals(authentication.getName()) || isAdmin;
     }
 }

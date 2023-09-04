@@ -1,5 +1,6 @@
 package com.ivanrogulj.Blog.Controllers;
 
+import com.ivanrogulj.Blog.DTO.CommentDTO;
 import com.ivanrogulj.Blog.Entities.Comment;
 import com.ivanrogulj.Blog.Services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ public class CommentController {
     }
 
     @GetMapping("/post/{postId}/comments")
-    public ResponseEntity<List<Comment>> getCommentsForPost(@PathVariable Long postId) {
-        List<Comment> comments = commentService.getCommentsForPost(postId);
+    public ResponseEntity<List<CommentDTO>> getCommentsForPost(@PathVariable Long postId) {
+        List<CommentDTO> comments = commentService.getCommentsForPost(postId);
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 

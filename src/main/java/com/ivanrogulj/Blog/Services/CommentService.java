@@ -1,4 +1,5 @@
 package com.ivanrogulj.Blog.Services;
+import com.ivanrogulj.Blog.DTO.CommentDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 import com.ivanrogulj.Blog.Entities.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +11,7 @@ import com.ivanrogulj.Blog.Entities.Comment;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -17,12 +19,14 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final PostService postService;
+    private final EntityToDtoMapper entityToDtoMapper;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, UserService userService, PostService postService) {
+    public CommentService(CommentRepository commentRepository, UserService userService, PostService postService, EntityToDtoMapper entityToDtoMapper) {
         this.commentRepository = commentRepository;
         this.userService = userService;
         this.postService = postService;
+        this.entityToDtoMapper = entityToDtoMapper;
     }
 
     public Comment createComment(Comment comment, Long userId, Long postId) {
@@ -39,8 +43,11 @@ public class CommentService {
         return null;
     }
 
-    public List<Comment> getCommentsForPost(Long postId) {
-        return commentRepository.findByPostId(postId);
+    public List<CommentDTO> getCommentsForPost(Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        return comments.stream()
+                .map(entityToDtoMapper::convertToCommentDto)
+                .toList();
     }
 
     public Optional<Comment> getCommentById(Long commentId) {
