@@ -5,7 +5,6 @@ import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.Services.EntityToDtoMapper;
 import com.ivanrogulj.Blog.Services.LikeService;
 import com.ivanrogulj.Blog.Services.UserService;
-import com.ivanrogulj.Blog.Utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,37 +22,26 @@ public class UserController {
     private final LikeService likeService;
     private final EntityToDtoMapper entityToDtoMapper;
 
-    private final JwtUtil jwtUtil;
 
     @Autowired
-    public UserController(UserService userService, LikeService likeService, EntityToDtoMapper entityToDtoMapper, JwtUtil jwtUtil) {
+    public UserController(UserService userService, LikeService likeService, EntityToDtoMapper entityToDtoMapper) {
         this.userService = userService;
         this.likeService = likeService;
         this.entityToDtoMapper = entityToDtoMapper;
-        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<UserDTO> getAllUserDTOs() {
-        List<User> users = userService.getAllUsers();
-        return users.stream()
-                .map(user -> entityToDtoMapper.convertUserToUserDTO(user, likeService.getLikesForUser(user.getId())))
-                .collect(Collectors.toList());
+    public List<UserDTO> getAllUsers() {
+        return userService.getAllUsers();
     }
 
 
     @GetMapping("/{id}")
    // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
-        Optional<User> userOptional = userService.getUserById(id);
-        if (userOptional.isPresent()) {
-            List<Like> likes = likeService.getLikesForUser(id);
-            UserDTO userDTO = entityToDtoMapper.convertUserToUserDTO(userOptional.get(), likes);
-            return ResponseEntity.ok(userDTO);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Optional<UserDTO> userOptional = userService.getUserById(id);
+        return userOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PostMapping("")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -63,8 +51,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO user) {
+        UserDTO updatedUser = userService.updateUser(id, user);
         if (updatedUser != null) {
             return ResponseEntity.ok(updatedUser);
         } else {

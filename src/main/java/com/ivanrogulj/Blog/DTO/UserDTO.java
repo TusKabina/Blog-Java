@@ -12,7 +12,7 @@ public class UserDTO {
     private Long id;
     private String username;
     private String fullName;
-    @JsonManagedReference
-    private List<Like> likes;
+//    @JsonManagedReference
+//    private List<Like> likes;
 
 }

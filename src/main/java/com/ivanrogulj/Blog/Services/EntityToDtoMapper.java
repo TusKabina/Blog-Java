@@ -3,9 +3,7 @@ import com.ivanrogulj.Blog.DTO.CategoryDTO;
 import com.ivanrogulj.Blog.DTO.CommentDTO;
 import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.Entities.*;
-import com.ivanrogulj.Blog.Services.LikeService;
 import com.ivanrogulj.Blog.DTO.UserDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,15 +15,24 @@ public class EntityToDtoMapper {
 
 
 
-    public UserDTO convertUserToUserDTO(User user, List<Like> likes) {
+    public UserDTO convertUserToUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
 
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
         userDTO.setFullName(user.getFullName());
-        userDTO.setLikes(likes);
 
         return userDTO;
+    }
+
+    public User convertDtoToUser(UserDTO userDTO) {
+        User user = new User();
+
+        user.setId(userDTO.getId());
+        user.setUsername(userDTO.getUsername());
+        user.setFullName(userDTO.getFullName());
+
+        return user;
     }
     public CategoryDTO convertToCategoryDto(Category category) {
         CategoryDTO categoryDTO = new CategoryDTO();
@@ -36,9 +43,18 @@ public class EntityToDtoMapper {
         return categoryDTO;
     }
 
+    public Category convertDtoToCategory(CategoryDTO categoryDTO) {
+        Category category = new Category();
+
+        category.setId(categoryDTO.getId());
+        category.setName(categoryDTO.getName());
+
+        return category;
+    }
+
     public CommentDTO convertToCommentDto(Comment comment) {
         CommentDTO commentDTO = new CommentDTO();
-        UserDTO userDTO = convertUserToUserDTO(comment.getUser(),comment.getUser().getLikes());
+        UserDTO userDTO = convertUserToUserDTO(comment.getUser());
 
         commentDTO.setId(comment.getId());
         commentDTO.setUser(userDTO);
@@ -48,22 +64,74 @@ public class EntityToDtoMapper {
         return commentDTO;
     }
 
+    public Comment convertDtoToComment(CommentDTO commentDto) {
+        Comment comment = new Comment();
+
+        User user = convertDtoToUser(commentDto.getUser());
+
+        comment.setId(commentDto.getId());
+        comment.setUser(user);
+        comment.setContent(commentDto.getContent());
+        comment.setCreationDate(commentDto.getCreationDate());
+
+        return comment;
+    }
+
     public PostDTO convertToPostDto(Post post) {
         PostDTO postDTO = new PostDTO();
-        CategoryDTO categoryDTO = convertToCategoryDto(post.getCategory());
-        UserDTO userDto = convertUserToUserDTO(post.getAuthor(),post.getAuthor().getLikes());
-        List<CommentDTO> commentDTOs = post.getComments()
-                .stream()
-                .map(this::convertToCommentDto)
-                .toList();
+        UserDTO userDto = convertUserToUserDTO(post.getAuthor());
+        if(post.getComments() != null)
+        {
+            List<CommentDTO> commentDTOs = post.getComments()
+                    .stream()
+                    .map(this::convertToCommentDto)
+                    .toList();
+
+            postDTO.setComments(commentDTOs);
+        }
+
+
 
         postDTO.setId(post.getId());
         postDTO.setAuthor(userDto);
         postDTO.setTitle(post.getTitle());
-        postDTO.setComments(commentDTOs);
-        postDTO.setCategory(categoryDTO);
+        postDTO.setContent(post.getContent());
+
+        if(post.getCategory() != null)
+        {
+            CategoryDTO categoryDTO = convertToCategoryDto(post.getCategory());
+            postDTO.setCategory(categoryDTO);
+        }
 
         return postDTO;
+    }
+
+    public Post convertDtoToPost(PostDTO postDTO) {
+        Post post = new Post();
+
+        post.setId(postDTO.getId());
+        post.setTitle(postDTO.getTitle());
+        post.setContent(postDTO.getContent()); // Assuming there's a setContent method
+        post.setCreationDate(postDTO.getCreationDate()); // Assuming there's a setCreationDate method
+
+        User author = convertDtoToUser(postDTO.getAuthor());
+        post.setAuthor(author);
+        if(postDTO.getCategory() != null)
+        {
+            Category category = convertDtoToCategory(postDTO.getCategory());
+            post.setCategory(category);
+        }
+        if(postDTO.getComments() != null)
+        {
+            List<Comment> comments = postDTO.getComments()
+                    .stream()
+                    .map(this::convertDtoToComment)
+                    .collect(Collectors.toList());
+            post.setComments(comments);
+        }
+
+
+        return post;
     }
 
 

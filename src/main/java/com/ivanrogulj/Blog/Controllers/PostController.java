@@ -67,8 +67,8 @@ public class PostController {
     }
 
     @PostMapping("/{authorId}")
-    public ResponseEntity<Post> createPost(@RequestBody Post post, @PathVariable Long authorId) {
-        Post newPost = postService.createPost(post, authorId);
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO, @PathVariable Long authorId) {
+        PostDTO newPost = postService.createPost(postDTO, authorId);
         if (newPost != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(newPost);
         } else {
@@ -100,13 +100,10 @@ public class PostController {
 
 
     public boolean isAuthorizedToDelete(Authentication authentication, Long id) {
-        // Check if the user has the "ADMIN" role
-        Post post = postService.getPostById(id);
+        PostDTO postDto = postService.getPostById(id);
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
-        // Check if the user is the owner of the post or is an admin
-
-        return post.getAuthor().getUsername().equals(authentication.getName()) || isAdmin;
+        return postDto.getAuthor().getUsername().equals(authentication.getName()) || isAdmin;
     }
 }

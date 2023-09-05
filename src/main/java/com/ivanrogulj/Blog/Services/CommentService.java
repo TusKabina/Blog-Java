@@ -1,5 +1,7 @@
 package com.ivanrogulj.Blog.Services;
 import com.ivanrogulj.Blog.DTO.CommentDTO;
+import com.ivanrogulj.Blog.DTO.PostDTO;
+import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 import com.ivanrogulj.Blog.Entities.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,19 +31,39 @@ public class CommentService {
         this.entityToDtoMapper = entityToDtoMapper;
     }
 
-    public Comment createComment(Comment comment, Long userId, Long postId) {
-        User user = userService.getUserById(userId).orElse(null);
-        Post post = postService.getPostById(postId);
-
-        if (user != null && post != null) {
-            comment.setUser(user);
+    public CommentDTO createComment(CommentDTO commentDto, Long userId, Long postId) {
+        UserDTO userDTO = userService.getUserById(userId).orElse(null);
+        PostDTO postDTO = postService.getPostById(postId);
+        Post post = entityToDtoMapper.convertDtoToPost(postDTO);
+        if (userDTO != null && post != null) {
+            commentDto.setUser(userDTO);
+            commentDto.setCreationDate(LocalDateTime.now());
+            Comment comment = entityToDtoMapper.convertDtoToComment(commentDto);
             comment.setPost(post);
-            comment.setCreationDate(LocalDateTime.now());
-            return commentRepository.save(comment);
+            commentRepository.save(comment);
+            commentDto.setId(comment.getId());
+            return commentDto;
         }
 
         return null;
     }
+
+//    public Comment createComment(Comment comment, Long userId, Long postId) {
+//        UserDTO userDTO = userService.getUserById(userId).orElse(null);
+//        PostDTO postDTO = postService.getPostById(postId);
+//        assert userDTO != null;
+//        User user = entityToDtoMapper.convertDtoToUser(userDTO);
+//        Post post = entityToDtoMapper.convertDtoToPost(postDTO);
+//        if (user != null && post != null) {
+//            comment.setUser(user);
+//            comment.setPost(post);
+//            comment.setCreationDate(LocalDateTime.now());
+//            return commentRepository.save(comment);
+//        }
+//
+//        return null;
+//    }
+
 
     public List<CommentDTO> getCommentsForPost(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);

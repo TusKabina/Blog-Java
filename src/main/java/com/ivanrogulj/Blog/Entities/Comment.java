@@ -22,7 +22,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-   // @JsonManagedReference
+    //@JsonManagedReference
     private Post post;
 
     @ManyToOne

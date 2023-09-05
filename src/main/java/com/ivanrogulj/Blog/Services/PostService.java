@@ -1,8 +1,9 @@
 package com.ivanrogulj.Blog.Services;
 
-import com.ivanrogulj.Blog.DTO.CategoryDTO;
+
+import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.Post;
-import com.ivanrogulj.Blog.Entities.User;
+
 import com.ivanrogulj.Blog.Entities.Category;
 import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.Repositories.CategoryRepository;
@@ -37,8 +38,10 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Post getPostById(Long id) {
-        return postRepository.findById(id).orElse(null);
+    public PostDTO getPostById(Long id) {
+        Post post = postRepository.findById(id).orElse(null);
+        assert post != null;
+        return entityToDtoMapper.convertToPostDto(post);
     }
 
     public PostDTO getPostDtoById(Long id)
@@ -69,12 +72,14 @@ public class PostService {
 
     }
 
-    public Post createPost(Post post, Long authorId) {
-        User author = userService.getUserById(authorId).orElse(null);
-        if (author != null) {
-            post.setAuthor(author);
-            post.setCreationDate(LocalDateTime.now());
-            return postRepository.save(post);
+    public PostDTO createPost(PostDTO postDTO, Long authorId) {
+        UserDTO authorDto = userService.getUserById(authorId).orElse(null);
+        if (authorDto != null) {
+            postDTO.setAuthor(authorDto);
+            postDTO.setCreationDate(LocalDateTime.now());
+            Post post = entityToDtoMapper.convertDtoToPost(postDTO);
+            postRepository.save(post);
+            return postDTO;
         }
         return null;
     }
@@ -90,17 +95,6 @@ public class PostService {
     public void deletePost(Long id) {
         postRepository.deleteById(id);
     }
-
-    public Post convertToPostEntity(PostDTO postDTO) {
-        Post post = new Post();
-
-        post.setId(postDTO.getId());
-        post.setTitle(postDTO.getTitle());
-        post.setContent(postDTO.getContent());
-
-        return post;
-    }
-
 
 
     public PostDTO assignCategoryToPost(Long postId, Long categoryId) {

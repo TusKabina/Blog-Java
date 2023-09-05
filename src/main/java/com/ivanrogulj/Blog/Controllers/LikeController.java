@@ -15,26 +15,26 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/likes")
 public class LikeController {
 
-    private final LikeService likeService;
-
-    @Autowired
-    public LikeController(LikeService likeService) {
-        this.likeService = likeService;
-    }
-
-    @PostMapping("/{userId}/{postId}")
-    public ResponseEntity<Like> likePost(@PathVariable Long userId, @PathVariable Long postId) {
-        Like like = likeService.likePost(userId, postId);
-        if (like != null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(like);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{likeId}")
-    public ResponseEntity<Void> unlikePost(@PathVariable Long likeId) {
-        likeService.unlikePost(likeId);
-        return ResponseEntity.noContent().build();
-    }
+//    private final LikeService likeService;
+//
+//    @Autowired
+//    public LikeController(LikeService likeService) {
+//        this.likeService = likeService;
+//    }
+//
+//    @PostMapping("/{userId}/{postId}")
+//    public ResponseEntity<Like> likePost(@PathVariable Long userId, @PathVariable Long postId) {
+//        Like like = likeService.likePost(userId, postId);
+//        if (like != null) {
+//            return ResponseEntity.status(HttpStatus.CREATED).body(like);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+//
+//    @DeleteMapping("/{likeId}")
+//    public ResponseEntity<Void> unlikePost(@PathVariable Long likeId) {
+//        likeService.unlikePost(likeId);
+//        return ResponseEntity.noContent().build();
+//    }
 }

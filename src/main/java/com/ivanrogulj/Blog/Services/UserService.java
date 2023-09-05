@@ -11,24 +11,32 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EntityToDtoMapper entityToDtoMapper;
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EntityToDtoMapper entityToDtoMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.entityToDtoMapper = entityToDtoMapper;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(entityToDtoMapper::convertUserToUserDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserDTO> getUserById(Long id) {
+      Optional<User> user = userRepository.findById(id);
+        Optional<UserDTO> userDTO = user.map(entityToDtoMapper::convertUserToUserDTO);
+        return userDTO;
     }
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -37,16 +45,22 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User registerUser(User user) {
-        // Encrypt the password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
 
-    public User updateUser(Long id, User user) {
+    public UserDTO updateUser(Long id, UserDTO userDto) {
         if (userRepository.existsById(id)) {
-            user.setId(id);
-            return userRepository.save(user);
+            User user = userRepository.findById(userDto.getId()).get();
+            if(userDto.getFullName() != null)
+            {
+                user.setFullName(userDto.getFullName());
+
+            }
+            if (user.getFullName() != null)
+            {
+                user.setUsername(userDto.getUsername());
+
+            }
+            userRepository.save(user);
+            return entityToDtoMapper.convertUserToUserDTO(user);
         }
         return null;
     }

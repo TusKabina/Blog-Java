@@ -32,9 +32,9 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Like> likes = new ArrayList<>();
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
      @JsonIgnore

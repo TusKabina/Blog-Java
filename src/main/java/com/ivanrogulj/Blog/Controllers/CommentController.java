@@ -23,18 +23,26 @@ public class CommentController {
     }
 
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity<Comment> createComment(
-            @PathVariable Long postId,
-            @RequestParam Long userId,
-            @RequestBody Comment comment) {
+    public ResponseEntity<CommentDTO> createComment(@PathVariable Long postId, @RequestParam Long userId, @RequestBody CommentDTO commentDTO) {
 
-        Comment createdComment = commentService.createComment(comment, userId, postId);
+        CommentDTO createdComment = commentService.createComment(commentDTO, userId, postId);
         if (createdComment != null) {
             return ResponseEntity.ok(createdComment);
         } else {
             return ResponseEntity.badRequest().build();
         }
     }
+
+//    @PostMapping("/posts/{postId}/comments")
+//    public ResponseEntity<Comment> createComment(@PathVariable Long postId, @RequestParam Long userId, @RequestBody Comment comment) {
+//
+//        Comment createdComment = commentService.createComment(comment, userId, postId);
+//        if (createdComment != null) {
+//            return ResponseEntity.ok(createdComment);
+//        } else {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
 
     @GetMapping("/post/{postId}/comments")
     public ResponseEntity<List<CommentDTO>> getCommentsForPost(@PathVariable Long postId) {
