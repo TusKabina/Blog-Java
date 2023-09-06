@@ -8,6 +8,8 @@ import com.ivanrogulj.Blog.Repositories.RoleRepository;
 import com.ivanrogulj.Blog.Repositories.UserRepository;
 import com.ivanrogulj.Blog.Services.CustomUserDetailsService;
 import com.ivanrogulj.Blog.Services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,5 +74,12 @@ public class AuthController {
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new ResponseEntity<>("User login successfully!...", HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        userService.logout(request, response);
+        // You can redirect or return a success response here
+        return ResponseEntity.ok().build();
     }
 }

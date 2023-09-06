@@ -1,6 +1,7 @@
 package com.ivanrogulj.Blog.Services;
 
 
+import com.ivanrogulj.Blog.DTO.CategoryDTO;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 
@@ -84,10 +85,20 @@ public class PostService {
         return null;
     }
 
-    public Post updatePost(Long id, Post post) {
-        if (postRepository.existsById(id)) {
-            post.setId(id);
-            return postRepository.save(post);
+    public PostDTO updatePost(Long id, PostDTO postDTO) {
+        Post post = postRepository.getPostsById(id).orElse(null);
+        if (post != null) {
+            if(postDTO.getContent() != null) {
+                post.setContent(postDTO.getContent());
+            }
+            if(postDTO.getTitle() != null)
+            {
+                post.setTitle(postDTO.getTitle());
+            }
+            postRepository.save(post);
+
+           return entityToDtoMapper.convertToPostDto(post);
+
         }
         return null;
     }

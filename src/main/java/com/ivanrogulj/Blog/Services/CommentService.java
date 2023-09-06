@@ -33,7 +33,7 @@ public class CommentService {
 
     public CommentDTO createComment(CommentDTO commentDto, Long userId, Long postId) {
         UserDTO userDTO = userService.getUserById(userId).orElse(null);
-        PostDTO postDTO = postService.getPostById(postId);
+        PostDTO postDTO = postService.getPostDtoById(postId);
         Post post = entityToDtoMapper.convertDtoToPost(postDTO);
         if (userDTO != null && post != null) {
             commentDto.setUser(userDTO);

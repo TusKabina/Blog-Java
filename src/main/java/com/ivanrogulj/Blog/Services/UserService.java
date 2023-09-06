@@ -3,12 +3,16 @@ package com.ivanrogulj.Blog.Services;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.Repositories.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,5 +79,26 @@ public class UserService {
         return userRepository.findByUsername(loggedInUsername);
     }
 
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().invalidate();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                // Assuming you have a specific cookie name for authentication
+                if (cookie.getName().equals("authCookie")) {
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    cookie.setMaxAge(0); // Expire the cookie
+                    response.addCookie(cookie);
+                }
+            }
+        }
+        try {
+            response.sendRedirect("/auth/login");
+        } catch (IOException e) {
+            //TODO: Handle exception
+            e.printStackTrace();
+        }
+    }
 
 }

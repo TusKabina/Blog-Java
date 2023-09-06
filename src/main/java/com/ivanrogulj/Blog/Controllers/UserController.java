@@ -1,6 +1,5 @@
 package com.ivanrogulj.Blog.Controllers;
 import com.ivanrogulj.Blog.DTO.UserDTO;
-import com.ivanrogulj.Blog.Entities.Like;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.Services.EntityToDtoMapper;
 import com.ivanrogulj.Blog.Services.LikeService;
@@ -10,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+
 import java.util.Optional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -65,4 +64,6 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }
