@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import java.io.IOException;
 import java.util.Collections;
 
 @RestController
@@ -46,12 +47,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<String> registerUser(@RequestBody User user) {
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        userService.createUser(user);
-//        return ResponseEntity.ok("User registered successfully");
-//    }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest signUpDto) {
@@ -78,8 +73,12 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-        userService.logout(request, response);
-        // You can redirect or return a success response here
+        try {
+            userService.logout(request, response);
+        } catch (IOException e) {
+            System.out.println("Exception: "+e);
+            return  ResponseEntity.internalServerError().build();
+        }
         return ResponseEntity.ok().build();
     }
 }

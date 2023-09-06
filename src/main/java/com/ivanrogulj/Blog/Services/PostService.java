@@ -7,11 +7,13 @@ import com.ivanrogulj.Blog.Entities.Post;
 
 import com.ivanrogulj.Blog.Entities.Category;
 import com.ivanrogulj.Blog.DTO.PostDTO;
+import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Blog.Repositories.CategoryRepository;
 import com.ivanrogulj.Blog.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +43,9 @@ public class PostService {
 
     public PostDTO getPostById(Long id) {
         Post post = postRepository.findById(id).orElse(null);
-        assert post != null;
+        if(post == null) {
+            throw new DataNotFoundException("Post not found!");
+        }
         return entityToDtoMapper.convertToPostDto(post);
     }
 
@@ -51,22 +55,22 @@ public class PostService {
 
         if(post == null)
         {
-            return null;
+            throw new DataNotFoundException("Post not found!");
         }
         return entityToDtoMapper.convertToPostDto(post);
     }
 
     public List<PostDTO> getPostsByCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found!"));
-        List<Post> posts = postRepository.findByCategory(category);
+                .orElseThrow(() -> new DataNotFoundException("Category not found!"));
+        List<Post> posts = postRepository.findByCategory(category).orElseThrow(() -> new DataNotFoundException("Post not found!"));
         return posts.stream()
                 .map(entityToDtoMapper::convertToPostDto)
                 .collect(Collectors.toList());
     }
 
     public List<PostDTO> getPostByUser(Long id) {
-        List<Post> posts = postRepository.getPostsByAuthorId(id);
+        List<Post> posts = postRepository.getPostsByAuthorId(id).orElseThrow(() -> new DataNotFoundException("Post not found!"));
         return posts.stream()
                 .map(entityToDtoMapper::convertToPostDto)
                 .collect(Collectors.toList());
@@ -74,33 +78,27 @@ public class PostService {
     }
 
     public PostDTO createPost(PostDTO postDTO, Long authorId) {
-        UserDTO authorDto = userService.getUserById(authorId).orElse(null);
-        if (authorDto != null) {
-            postDTO.setAuthor(authorDto);
-            postDTO.setCreationDate(LocalDateTime.now());
-            Post post = entityToDtoMapper.convertDtoToPost(postDTO);
-            postRepository.save(post);
-            return postDTO;
-        }
-        return null;
+        UserDTO authorDto = userService.getUserById(authorId);
+
+        postDTO.setAuthor(authorDto);
+        postDTO.setCreationDate(LocalDateTime.now());
+        Post post = entityToDtoMapper.convertDtoToPost(postDTO);
+        postRepository.save(post);
+        return postDTO;
     }
 
     public PostDTO updatePost(Long id, PostDTO postDTO) {
-        Post post = postRepository.getPostsById(id).orElse(null);
-        if (post != null) {
-            if(postDTO.getContent() != null) {
-                post.setContent(postDTO.getContent());
-            }
-            if(postDTO.getTitle() != null)
-            {
-                post.setTitle(postDTO.getTitle());
-            }
-            postRepository.save(post);
-
-           return entityToDtoMapper.convertToPostDto(post);
-
+        Post post = postRepository.getPostsById(id).orElseThrow(() -> new DataNotFoundException("Post not found!"));
+        if(postDTO.getContent() != null) {
+            post.setContent(postDTO.getContent());
         }
-        return null;
+        if(postDTO.getTitle() != null)
+        {
+            post.setTitle(postDTO.getTitle());
+        }
+        postRepository.save(post);
+
+        return entityToDtoMapper.convertToPostDto(post);
     }
 
     public void deletePost(Long id) {
@@ -109,19 +107,11 @@ public class PostService {
 
 
     public PostDTO assignCategoryToPost(Long postId, Long categoryId) {
-        Optional<Post> postOptional = postRepository.findById(postId);
-        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post not found!"));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new DataNotFoundException("Category not found!"));
+        post.setCategory(category);
 
-        if (postOptional.isPresent() && categoryOptional.isPresent()) {
-            Post post = postOptional.get();
-            Category category = categoryOptional.get();
+        return entityToDtoMapper.convertToPostDto(post);
 
-            post.setCategory(category);
-            postRepository.save(post);
-
-            return entityToDtoMapper.convertToPostDto(post);
-        }
-
-        return null;
     }
 }

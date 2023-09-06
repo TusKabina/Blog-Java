@@ -2,6 +2,8 @@ package com.ivanrogulj.Blog.Services;
 
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.User;
+import com.ivanrogulj.Blog.ExceptionHandler.BadRequestException;
+import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Blog.Repositories.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -37,36 +40,31 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<UserDTO> getUserById(Long id) {
-      Optional<User> user = userRepository.findById(id);
-        Optional<UserDTO> userDTO = user.map(entityToDtoMapper::convertUserToUserDTO);
-        return userDTO;
+    public UserDTO getUserById(Long id) {
+    User user = userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("User not found!"));
+        return entityToDtoMapper.convertUserToUserDTO(user);
     }
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).orElseThrow(() -> new DataNotFoundException("User not found!"));
     }
+    //TODO: prebacit registerUser logiku u user service
     public User createUser(User user) {
         return userRepository.save(user);
     }
 
 
     public UserDTO updateUser(Long id, UserDTO userDto) {
-        if (userRepository.existsById(id)) {
-            User user = userRepository.findById(userDto.getId()).get();
-            if(userDto.getFullName() != null)
-            {
-                user.setFullName(userDto.getFullName());
+        User user = userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("User not found!"));
+        if (userDto.getFullName() != null) {
+            user.setFullName(userDto.getFullName());
 
-            }
-            if (user.getFullName() != null)
-            {
-                user.setUsername(userDto.getUsername());
-
-            }
-            userRepository.save(user);
-            return entityToDtoMapper.convertUserToUserDTO(user);
         }
-        return null;
+        if (user.getFullName() != null) {
+            user.setUsername(userDto.getUsername());
+
+        }
+        userRepository.save(user);
+        return entityToDtoMapper.convertUserToUserDTO(user);
     }
 
     public void deleteUser(Long id) {
@@ -76,10 +74,10 @@ public class UserService {
     public User getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loggedInUsername = auth.getName();
-        return userRepository.findByUsername(loggedInUsername);
+        return userRepository.findByUsername(loggedInUsername).orElseThrow(() -> new DataNotFoundException("User not found!"));
     }
 
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().invalidate();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -96,8 +94,7 @@ public class UserService {
         try {
             response.sendRedirect("/auth/login");
         } catch (IOException e) {
-            //TODO: Handle exception
-            e.printStackTrace();
+            throw new IOException("Exception while trying to redirect user to login!");
         }
     }
 

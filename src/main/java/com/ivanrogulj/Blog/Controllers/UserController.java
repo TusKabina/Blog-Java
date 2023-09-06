@@ -39,8 +39,8 @@ public class UserController {
     @GetMapping("/{id}")
    // @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
-        Optional<UserDTO> userOptional = userService.getUserById(id);
-        return userOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        UserDTO user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
     @PostMapping("")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

@@ -4,12 +4,14 @@ import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 import com.ivanrogulj.Blog.Entities.User;
+import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ivanrogulj.Blog.Repositories.CommentRepository;
 import com.ivanrogulj.Blog.Entities.Comment;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -32,20 +34,17 @@ public class CommentService {
     }
 
     public CommentDTO createComment(CommentDTO commentDto, Long userId, Long postId) {
-        UserDTO userDTO = userService.getUserById(userId).orElse(null);
+        UserDTO userDTO = userService.getUserById(userId);
         PostDTO postDTO = postService.getPostDtoById(postId);
         Post post = entityToDtoMapper.convertDtoToPost(postDTO);
-        if (userDTO != null && post != null) {
-            commentDto.setUser(userDTO);
-            commentDto.setCreationDate(LocalDateTime.now());
-            Comment comment = entityToDtoMapper.convertDtoToComment(commentDto);
-            comment.setPost(post);
-            commentRepository.save(comment);
-            commentDto.setId(comment.getId());
-            return commentDto;
-        }
+        commentDto.setUser(userDTO);
+        commentDto.setCreationDate(LocalDateTime.now());
+        Comment comment = entityToDtoMapper.convertDtoToComment(commentDto);
+        comment.setPost(post);
+        commentRepository.save(comment);
+        commentDto.setId(comment.getId());
+        return commentDto;
 
-        return null;
     }
 
 //    public Comment createComment(Comment comment, Long userId, Long postId) {
@@ -66,29 +65,31 @@ public class CommentService {
 
 
     public List<CommentDTO> getCommentsForPost(Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
+        List<Comment> comments = commentRepository.findByPostId(postId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
         return comments.stream()
                 .map(entityToDtoMapper::convertToCommentDto)
                 .toList();
     }
 
-    public Optional<Comment> getCommentById(Long commentId) {
-        return commentRepository.findById(commentId);
+    public CommentDTO getCommentById(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
+        return entityToDtoMapper.convertToCommentDto(comment);
     }
 
-    public Comment updateComment(Long commentId, Comment updatedComment) {
-        if (commentRepository.existsById(commentId)) {
-            updatedComment.setId(commentId);
-            return commentRepository.save(updatedComment);
+    public CommentDTO updateComment(Long commentId, CommentDTO updatedComment) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
+        if(!comment.getContent().isEmpty())
+        {
+            comment.setContent(updatedComment.getContent());
         }
-        throw new EntityNotFoundException("Comment not found");
+        CommentDTO commentDTO = entityToDtoMapper.convertToCommentDto(comment);
+        commentRepository.save(comment);
+
+        return commentDTO;
     }
 
     public void deleteComment(Long commentId) {
-        if (commentRepository.existsById(commentId)) {
-            commentRepository.deleteById(commentId);
-        } else {
-            throw new EntityNotFoundException("Comment not found");
-        }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
+        commentRepository.deleteById(commentId);
     }
 }

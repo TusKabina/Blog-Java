@@ -51,15 +51,14 @@ public class CommentController {
     }
 
     @GetMapping("comments/{commentId}")
-    public ResponseEntity<Comment> getCommentById(@PathVariable Long commentId) {
-        Optional<Comment> comment = commentService.getCommentById(commentId);
-        return comment.map(c -> ResponseEntity.status(HttpStatus.OK).body(c))
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<CommentDTO> getCommentById(@PathVariable Long commentId) {
+       CommentDTO comment = commentService.getCommentById(commentId);
+        return  ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 
     @PutMapping("comments/{commentId}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Long commentId, @RequestBody Comment updatedComment) {
-        Comment comment = commentService.updateComment(commentId, updatedComment);
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable Long commentId, @RequestBody CommentDTO updatedComment) {
+        CommentDTO comment = commentService.updateComment(commentId, updatedComment);
         return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 
