@@ -2,10 +2,14 @@ package com.ivanrogulj.Blog.Services;
 
 import com.ivanrogulj.Blog.DTO.CategoryDTO;
 import com.ivanrogulj.Blog.Entities.Category;
+import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Blog.Repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -40,6 +44,13 @@ public class CategoryService {
         }
         return entityToDtoMapper.convertToCategoryDto(category);
 
+    }
+
+    public List<CategoryDTO> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(entityToDtoMapper::convertToCategoryDto)
+                .collect(Collectors.toList());
     }
     public void deleteCategory(long id) {
         Category category =categoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Category not found"));
