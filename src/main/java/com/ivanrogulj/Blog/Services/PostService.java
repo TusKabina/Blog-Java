@@ -84,6 +84,7 @@ public class PostService {
         postDTO.setCreationDate(LocalDateTime.now());
         Post post = entityToDtoMapper.convertDtoToPost(postDTO);
         postRepository.save(post);
+        postDTO.setId(post.getId());
         return postDTO;
     }
 
