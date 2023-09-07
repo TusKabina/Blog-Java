@@ -7,6 +7,8 @@ import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.ivanrogulj.Blog.Repositories.CommentRepository;
 import com.ivanrogulj.Blog.Entities.Comment;
@@ -64,11 +66,9 @@ public class CommentService {
 //    }
 
 
-    public List<CommentDTO> getCommentsForPost(Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
-        return comments.stream()
-                .map(entityToDtoMapper::convertToCommentDto)
-                .toList();
+    public Page<CommentDTO> getCommentsForPost(Long postId, Pageable pageable) {
+        Page<Comment> comments = commentRepository.findByPostId(postId,pageable);
+        return comments.map(entityToDtoMapper::convertToCommentDto);
     }
 
     public CommentDTO getCommentById(Long commentId) {

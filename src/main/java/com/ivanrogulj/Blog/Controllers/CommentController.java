@@ -4,6 +4,9 @@ import com.ivanrogulj.Blog.DTO.CommentDTO;
 import com.ivanrogulj.Blog.Entities.Comment;
 import com.ivanrogulj.Blog.Services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +48,8 @@ public class CommentController {
 //    }
 
     @GetMapping("/post/{postId}/comments")
-    public ResponseEntity<List<CommentDTO>> getCommentsForPost(@PathVariable Long postId) {
-        List<CommentDTO> comments = commentService.getCommentsForPost(postId);
+    public ResponseEntity<Page<CommentDTO>> getCommentsForPost(@PathVariable Long postId, @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        Page<CommentDTO> comments = commentService.getCommentsForPost(postId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 

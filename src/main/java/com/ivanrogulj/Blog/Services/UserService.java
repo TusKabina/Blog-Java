@@ -9,6 +9,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,11 +35,9 @@ public class UserService {
         this.entityToDtoMapper = entityToDtoMapper;
     }
 
-    public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(entityToDtoMapper::convertUserToUserDTO)
-                .collect(Collectors.toList());
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
+        return users.map(entityToDtoMapper::convertUserToUserDTO);
     }
 
     public UserDTO getUserById(Long id) {
@@ -47,7 +47,7 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new DataNotFoundException("User not found!"));
     }
-    //TODO: prebacit registerUser logiku u user service
+
     public User createUser(User user) {
         return userRepository.save(user);
     }

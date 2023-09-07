@@ -2,14 +2,17 @@ package com.ivanrogulj.Blog.Repositories;
 
 import com.ivanrogulj.Blog.Entities.Category;
 import com.ivanrogulj.Blog.Entities.Post;
-import com.ivanrogulj.Blog.Entities.User;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository  extends JpaRepository<Post, Long> {
-    Optional<List<Post>> getPostsByAuthorId(Long userId);
-    Optional<List<Post>> findByCategory(Category category);
+    Page<Post> getPostsByAuthorId(Long id, Pageable pageable);
+    Page<Post>  findByCategory(Category category, Pageable pageable);
     Optional<Post> getPostsById(Long id);
+    Page<Post> findAll(Pageable pageable);
 }

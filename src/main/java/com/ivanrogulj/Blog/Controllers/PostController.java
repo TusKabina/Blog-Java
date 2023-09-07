@@ -4,6 +4,9 @@ import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 import com.ivanrogulj.Blog.Services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,8 +26,8 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> getAllPosts() {
-        return postService.getAllPosts();
+    public ResponseEntity<Page<PostDTO>> getAllPosts(@PageableDefault(page = 0, size = 5) Pageable pageable) {
+        return ResponseEntity.ok(postService.getAllPosts(pageable));
     }
 
     @GetMapping("/{id}")
@@ -37,8 +40,8 @@ public class PostController {
         }
     }
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<List<PostDTO>> getPostByCategoryId(@PathVariable Long categoryId) {
-        List<PostDTO> posts = postService.getPostsByCategory(categoryId);
+    public ResponseEntity<Page<PostDTO>> getPostByCategoryId(@PathVariable Long categoryId, @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        Page<PostDTO> posts = postService.getPostsByCategory(categoryId, pageable);
         if (posts != null) {
             return ResponseEntity.ok(posts);
         } else {
@@ -57,8 +60,8 @@ public class PostController {
     }
 
     @GetMapping("/all/{authorId}")
-    public ResponseEntity<List<PostDTO>> getPostByAuthorId(@PathVariable Long authorId) {
-        List<PostDTO> posts = postService.getPostByUser(authorId);
+    public ResponseEntity<Page<PostDTO>> getPostsByAuthorId(@PathVariable Long authorId, @PageableDefault(page = 0, size = 5) Pageable pageable) {
+        Page<PostDTO> posts = postService.getPostsByUser(authorId, pageable);
         if (posts != null) {
             return ResponseEntity.ok(posts);
         } else {

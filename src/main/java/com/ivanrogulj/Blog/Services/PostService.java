@@ -11,6 +11,8 @@ import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Blog.Repositories.CategoryRepository;
 import com.ivanrogulj.Blog.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
@@ -37,8 +39,9 @@ public class PostService {
         this.entityToDtoMapper = entityToDtoMapper;
     }
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public Page<PostDTO> getAllPosts(Pageable pageable) {
+        Page<Post> postPage =  postRepository.findAll(pageable);
+        return postPage.map(entityToDtoMapper::convertToPostDto);
     }
 
     public PostDTO getPostById(Long id) {
@@ -60,20 +63,17 @@ public class PostService {
         return entityToDtoMapper.convertToPostDto(post);
     }
 
-    public List<PostDTO> getPostsByCategory(Long categoryId) {
+    public Page<PostDTO> getPostsByCategory(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new DataNotFoundException("Category not found!"));
-        List<Post> posts = postRepository.findByCategory(category).orElseThrow(() -> new DataNotFoundException("Post not found!"));
-        return posts.stream()
-                .map(entityToDtoMapper::convertToPostDto)
-                .collect(Collectors.toList());
+       Page<Post> postPage = postRepository.findByCategory(category, pageable);
+        return postPage.map(entityToDtoMapper::convertToPostDto);
     }
 
-    public List<PostDTO> getPostByUser(Long id) {
-        List<Post> posts = postRepository.getPostsByAuthorId(id).orElseThrow(() -> new DataNotFoundException("Post not found!"));
-        return posts.stream()
-                .map(entityToDtoMapper::convertToPostDto)
-                .collect(Collectors.toList());
+    public Page<PostDTO> getPostsByUser(Long id, Pageable pageable) {
+        Page<Post> postPage = postRepository.getPostsByAuthorId(id, pageable);
+
+        return postPage.map(entityToDtoMapper::convertToPostDto);
 
     }
 
