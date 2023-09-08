@@ -90,23 +90,11 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id, Authentication authentication) {
-        if (isAuthorizedToDelete(authentication, id)) {
-            // Delete the post
-            postService.deletePost(id);
-            return ResponseEntity.ok("Post deleted successfully.");
-        } else {
-            // Return a 403 Forbidden response for unauthorized access
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this post.");
-        }
+    public ResponseEntity<String> deletePost(Authentication authentication, @PathVariable Long id) {
+        postService.deletePost(id);
+        return ResponseEntity.ok("Post deleted successfully.");
     }
 
 
-    public boolean isAuthorizedToDelete(Authentication authentication, Long id) {
-        PostDTO postDto = postService.getPostById(id);
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
-        return postDto.getAuthor().getUsername().equals(authentication.getName()) || isAdmin;
-    }
 }

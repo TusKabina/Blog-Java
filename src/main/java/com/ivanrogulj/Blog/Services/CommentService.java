@@ -5,10 +5,14 @@ import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
+import com.ivanrogulj.Blog.ExceptionHandler.ForbiddenException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.ivanrogulj.Blog.Repositories.CommentRepository;
 import com.ivanrogulj.Blog.Entities.Comment;
@@ -16,6 +20,7 @@ import com.ivanrogulj.Blog.Entities.Comment;
 import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,6 +41,10 @@ public class CommentService {
     }
 
     public CommentDTO createComment(CommentDTO commentDto, Long userId, Long postId) {
+        if(!isAuthorizedToCreate(userId))
+        {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         UserDTO userDTO = userService.getUserById(userId);
         PostDTO postDTO = postService.getPostDtoById(postId);
         Post post = entityToDtoMapper.convertDtoToPost(postDTO);
@@ -89,7 +98,40 @@ public class CommentService {
     }
 
     public void deleteComment(Long commentId) {
+        if (!isAuthorizedToDelete(commentId)) {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
         commentRepository.deleteById(commentId);
+    }
+
+
+    public boolean isAuthorizedToDelete(Long commentId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isAdmin) {
+            return true;
+        }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException ("Comment now found!"));
+
+        String commentOwnerUsername = comment.getUser().getUsername();
+        String postOwnerUsername = comment.getPost().getAuthor().getUsername();
+
+        String currentUserUsername = userDetails.getUsername();
+
+        return currentUserUsername.equals(commentOwnerUsername)
+                || currentUserUsername.equals(postOwnerUsername);
+    }
+
+    private boolean isAuthorizedToCreate(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        return Objects.equals(userDetails.getUsername(), userService.getUserById(id).getUsername()) || isAdmin;
     }
 }

@@ -1,9 +1,11 @@
 package com.ivanrogulj.Blog.Services;
 
+import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.ExceptionHandler.BadRequestException;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
+import com.ivanrogulj.Blog.ExceptionHandler.ForbiddenException;
 import com.ivanrogulj.Blog.Repositories.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,6 +56,10 @@ public class UserService {
 
 
     public UserDTO updateUser(Long id, UserDTO userDto) {
+        if(!isAuthorized(id))
+        {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         User user = userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("User not found!"));
         if (userDto.getFullName() != null) {
             user.setFullName(userDto.getFullName());
@@ -68,6 +74,10 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        if(!isAuthorized(id))
+        {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         userRepository.deleteById(id);
     }
 
@@ -82,7 +92,6 @@ public class UserService {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                // Assuming you have a specific cookie name for authentication
                 if (cookie.getName().equals("authCookie")) {
                     cookie.setValue("");
                     cookie.setPath("/");
@@ -98,4 +107,12 @@ public class UserService {
         }
     }
 
+    private boolean isAuthorized(Long id) {
+        UserDTO userDTO = getUserById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+        return userDTO.getUsername().equals(authentication.getName()) || isAdmin;
+    }
 }

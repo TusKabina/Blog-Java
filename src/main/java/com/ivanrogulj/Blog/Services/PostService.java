@@ -8,16 +8,21 @@ import com.ivanrogulj.Blog.Entities.Post;
 import com.ivanrogulj.Blog.Entities.Category;
 import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
+import com.ivanrogulj.Blog.ExceptionHandler.ForbiddenException;
 import com.ivanrogulj.Blog.Repositories.CategoryRepository;
 import com.ivanrogulj.Blog.Repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -78,6 +83,10 @@ public class PostService {
     }
 
     public PostDTO createPost(PostDTO postDTO, Long authorId) {
+        if(!isAuthorizedToCreate(authorId))
+        {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         UserDTO authorDto = userService.getUserById(authorId);
 
         postDTO.setAuthor(authorDto);
@@ -89,6 +98,10 @@ public class PostService {
     }
 
     public PostDTO updatePost(Long id, PostDTO postDTO) {
+        if(!isAuthorized(id))
+        {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         Post post = postRepository.getPostsById(id).orElseThrow(() -> new DataNotFoundException("Post not found!"));
         if(postDTO.getContent() != null) {
             post.setContent(postDTO.getContent());
@@ -103,11 +116,19 @@ public class PostService {
     }
 
     public void deletePost(Long id) {
+        if(!isAuthorized(id))
+        {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         postRepository.deleteById(id);
     }
 
 
     public PostDTO assignCategoryToPost(Long postId, Long categoryId) {
+        if(!isAuthorized(postId))
+        {
+            throw new ForbiddenException("You are not authorized for this operation!");
+        }
         Post post = postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post not found!"));
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new DataNotFoundException("Category not found!"));
         post.setCategory(category);
@@ -115,4 +136,24 @@ public class PostService {
         return entityToDtoMapper.convertToPostDto(post);
 
     }
+
+
+    private boolean isAuthorized(Long id) {
+        PostDTO postDto = getPostById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+
+        return postDto.getAuthor().getUsername().equals(authentication.getName()) || isAdmin;
+    }
+
+    private boolean isAuthorizedToCreate(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        return Objects.equals(userDetails.getUsername(), userService.getUserById(id).getUsername()) || isAdmin;
+    }
+
 }
