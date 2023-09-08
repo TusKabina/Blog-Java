@@ -90,8 +90,6 @@ public class EntityToDtoMapper {
             postDTO.setComments(commentDTOs);
         }
 
-
-
         postDTO.setId(post.getId());
         postDTO.setAuthor(userDto);
         postDTO.setTitle(post.getTitle());
@@ -111,8 +109,8 @@ public class EntityToDtoMapper {
 
         post.setId(postDTO.getId());
         post.setTitle(postDTO.getTitle());
-        post.setContent(postDTO.getContent()); // Assuming there's a setContent method
-        post.setCreationDate(postDTO.getCreationDate()); // Assuming there's a setCreationDate method
+        post.setContent(postDTO.getContent());
+        post.setCreationDate(postDTO.getCreationDate());
 
         User author = convertDtoToUser(postDTO.getAuthor());
         post.setAuthor(author);

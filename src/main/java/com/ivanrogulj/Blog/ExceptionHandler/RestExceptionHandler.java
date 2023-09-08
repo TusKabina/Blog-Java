@@ -16,6 +16,14 @@ public class RestExceptionHandler {
         error.setErrorMessage(e.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(ForbiddenException e) {
+        ErrorResponse error = new ErrorResponse();
+        error.setErrorCode("Forbidden");
+        error.setErrorMessage(e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
 
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(DataNotFoundException e) {
