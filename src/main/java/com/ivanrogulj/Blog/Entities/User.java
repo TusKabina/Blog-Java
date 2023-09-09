@@ -1,16 +1,10 @@
 package com.ivanrogulj.Blog.Entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,9 +26,8 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<Like> likes = new ArrayList<>();
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @OneToMany(mappedBy = "user")
      @JsonIgnore

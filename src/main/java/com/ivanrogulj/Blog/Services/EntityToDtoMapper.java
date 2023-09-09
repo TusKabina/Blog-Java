@@ -21,6 +21,7 @@ public class EntityToDtoMapper {
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
         userDTO.setFullName(user.getFullName());
+        userDTO.setEmail(user.getEmail());
         userDTO.setRoles(user.getRoles());
 
         return userDTO;
@@ -32,6 +33,7 @@ public class EntityToDtoMapper {
         user.setId(userDTO.getId());
         user.setUsername(userDTO.getUsername());
         user.setFullName(userDTO.getFullName());
+        user.setEmail(userDTO.getEmail());
         user.setRoles(userDTO.getRoles());
 
         return user;
