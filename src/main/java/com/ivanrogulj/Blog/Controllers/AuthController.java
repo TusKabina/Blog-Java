@@ -53,6 +53,10 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
             return new ResponseEntity<>("Username already exist!", HttpStatus.BAD_REQUEST);
         }
+        if(userRepository.existsByEmail(signUpDto.getEmail()))
+        {
+            return new ResponseEntity<>("User with that email already exist!", HttpStatus.BAD_REQUEST);
+        }
         User user = new User();
         user.setUsername(signUpDto.getUsername());
         user.setFullName(signUpDto.getFullName());

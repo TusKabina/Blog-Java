@@ -1,8 +1,6 @@
 package com.ivanrogulj.Blog.Controllers;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.User;
-import com.ivanrogulj.Blog.Services.DTOAssembler;
-import com.ivanrogulj.Blog.Services.LikeService;
 import com.ivanrogulj.Blog.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,15 +16,11 @@ import org.springframework.http.HttpStatus;
 public class UserController {
 
     private final UserService userService;
-    private final LikeService likeService;
-    private final DTOAssembler dtoAssembler;
 
 
     @Autowired
-    public UserController(UserService userService, LikeService likeService, DTOAssembler dtoAssembler) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.likeService = likeService;
-        this.dtoAssembler = dtoAssembler;
     }
 
     @GetMapping("")

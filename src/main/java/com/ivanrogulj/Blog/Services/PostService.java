@@ -132,6 +132,11 @@ public class PostService {
 
     }
 
+    public Page<PostDTO> searchPostsByTitle(String query, Pageable pageable) {
+        Page<Post> matchingPosts = postRepository.findByTitleContainingIgnoreCase(query, pageable);
+        return matchingPosts.map(dtoAssembler::convertToPostDto);
+    }
+
 
     private boolean isAuthorized(Long id) {
         PostDTO postDto = getPostById(id);

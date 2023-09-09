@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -74,6 +76,19 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+
+    public UserDTO searchUsersByUsername(String query) {
+        User matchingUser = userRepository.findByUsernameContainingIgnoreCase(query);
+        return dtoAssembler.convertUserToUserDTO(matchingUser);
+    }
+
+    public Page<UserDTO> searchUsersByFullName(String query, Pageable pageable) {
+        Page<User> matchingUsers = userRepository.findByFullNameContainingIgnoreCase(query,pageable);
+        return matchingUsers.map(dtoAssembler::convertUserToUserDTO);
+    }
+
+
 
     public User getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
