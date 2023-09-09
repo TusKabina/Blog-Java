@@ -3,10 +3,8 @@ import com.ivanrogulj.Blog.DTO.CommentDTO;
 import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.Post;
-import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Blog.ExceptionHandler.ForbiddenException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,12 +15,8 @@ import org.springframework.stereotype.Service;
 import com.ivanrogulj.Blog.Repositories.CommentRepository;
 import com.ivanrogulj.Blog.Entities.Comment;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -30,14 +24,14 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final PostService postService;
-    private final EntityToDtoMapper entityToDtoMapper;
+    private final DTOAssembler dtoAssembler;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, UserService userService, PostService postService, EntityToDtoMapper entityToDtoMapper) {
+    public CommentService(CommentRepository commentRepository, UserService userService, PostService postService, DTOAssembler dtoAssembler) {
         this.commentRepository = commentRepository;
         this.userService = userService;
         this.postService = postService;
-        this.entityToDtoMapper = entityToDtoMapper;
+        this.dtoAssembler = dtoAssembler;
     }
 
     public CommentDTO createComment(CommentDTO commentDto, Long userId, Long postId) {
@@ -47,10 +41,10 @@ public class CommentService {
         }
         UserDTO userDTO = userService.getUserById(userId);
         PostDTO postDTO = postService.getPostDtoById(postId);
-        Post post = entityToDtoMapper.convertDtoToPost(postDTO);
+        Post post = dtoAssembler.convertDtoToPost(postDTO);
         commentDto.setUser(userDTO);
         commentDto.setCreationDate(LocalDateTime.now());
-        Comment comment = entityToDtoMapper.convertDtoToComment(commentDto);
+        Comment comment = dtoAssembler.convertDtoToComment(commentDto);
         comment.setPost(post);
         commentRepository.save(comment);
         commentDto.setId(comment.getId());
@@ -77,12 +71,12 @@ public class CommentService {
 
     public Page<CommentDTO> getCommentsForPost(Long postId, Pageable pageable) {
         Page<Comment> comments = commentRepository.findByPostId(postId,pageable);
-        return comments.map(entityToDtoMapper::convertToCommentDto);
+        return comments.map(dtoAssembler::convertToCommentDto);
     }
 
     public CommentDTO getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
-        return entityToDtoMapper.convertToCommentDto(comment);
+        return dtoAssembler.convertToCommentDto(comment);
     }
 
     public CommentDTO updateComment(Long commentId, CommentDTO updatedComment) {
@@ -91,7 +85,7 @@ public class CommentService {
         {
             comment.setContent(updatedComment.getContent());
         }
-        CommentDTO commentDTO = entityToDtoMapper.convertToCommentDto(comment);
+        CommentDTO commentDTO = dtoAssembler.convertToCommentDto(comment);
         commentRepository.save(comment);
 
         return commentDTO;

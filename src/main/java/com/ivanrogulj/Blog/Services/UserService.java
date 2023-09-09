@@ -1,9 +1,7 @@
 package com.ivanrogulj.Blog.Services;
 
-import com.ivanrogulj.Blog.DTO.PostDTO;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.User;
-import com.ivanrogulj.Blog.ExceptionHandler.BadRequestException;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Blog.ExceptionHandler.ForbiddenException;
 import com.ivanrogulj.Blog.Repositories.UserRepository;
@@ -18,33 +16,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EntityToDtoMapper entityToDtoMapper;
+    private final DTOAssembler dtoAssembler;
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EntityToDtoMapper entityToDtoMapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, DTOAssembler dtoAssembler) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.entityToDtoMapper = entityToDtoMapper;
+        this.dtoAssembler = dtoAssembler;
     }
 
     public Page<UserDTO> getAllUsers(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
-        return users.map(entityToDtoMapper::convertUserToUserDTO);
+        return users.map(dtoAssembler::convertUserToUserDTO);
     }
 
     public UserDTO getUserById(Long id) {
     User user = userRepository.findById(id).orElseThrow(() -> new DataNotFoundException("User not found!"));
-        return entityToDtoMapper.convertUserToUserDTO(user);
+        return dtoAssembler.convertUserToUserDTO(user);
     }
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new DataNotFoundException("User not found!"));
@@ -70,7 +64,7 @@ public class UserService {
 
         }
         userRepository.save(user);
-        return entityToDtoMapper.convertUserToUserDTO(user);
+        return dtoAssembler.convertUserToUserDTO(user);
     }
 
     public void deleteUser(Long id) {
@@ -92,7 +86,7 @@ public class UserService {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("authCookie")) {
+                if (cookie.getName().equals("JSESSIONID")) {
                     cookie.setValue("");
                     cookie.setPath("/");
                     cookie.setMaxAge(0); // Expire the cookie

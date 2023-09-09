@@ -1,7 +1,6 @@
 package com.ivanrogulj.Blog.Services;
 
 
-import com.ivanrogulj.Blog.DTO.CategoryDTO;
 import com.ivanrogulj.Blog.DTO.UserDTO;
 import com.ivanrogulj.Blog.Entities.Post;
 
@@ -19,12 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -34,19 +29,19 @@ public class PostService {
     private final CategoryService categoryService;
 
     private final UserService userService;
-    private final EntityToDtoMapper entityToDtoMapper;
+    private final DTOAssembler dtoAssembler;
     @Autowired
-    public PostService(PostRepository postRepository, CategoryRepository categoryRepository, CategoryService categoryService, UserService userService, EntityToDtoMapper entityToDtoMapper) {
+    public PostService(PostRepository postRepository, CategoryRepository categoryRepository, CategoryService categoryService, UserService userService, DTOAssembler dtoAssembler) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.categoryService = categoryService;
         this.userService = userService;
-        this.entityToDtoMapper = entityToDtoMapper;
+        this.dtoAssembler = dtoAssembler;
     }
 
     public Page<PostDTO> getAllPosts(Pageable pageable) {
         Page<Post> postPage =  postRepository.findAll(pageable);
-        return postPage.map(entityToDtoMapper::convertToPostDto);
+        return postPage.map(dtoAssembler::convertToPostDto);
     }
 
     public PostDTO getPostById(Long id) {
@@ -54,7 +49,7 @@ public class PostService {
         if(post == null) {
             throw new DataNotFoundException("Post not found!");
         }
-        return entityToDtoMapper.convertToPostDto(post);
+        return dtoAssembler.convertToPostDto(post);
     }
 
     public PostDTO getPostDtoById(Long id)
@@ -65,20 +60,20 @@ public class PostService {
         {
             throw new DataNotFoundException("Post not found!");
         }
-        return entityToDtoMapper.convertToPostDto(post);
+        return dtoAssembler.convertToPostDto(post);
     }
 
     public Page<PostDTO> getPostsByCategory(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new DataNotFoundException("Category not found!"));
        Page<Post> postPage = postRepository.findByCategory(category, pageable);
-        return postPage.map(entityToDtoMapper::convertToPostDto);
+        return postPage.map(dtoAssembler::convertToPostDto);
     }
 
     public Page<PostDTO> getPostsByUser(Long id, Pageable pageable) {
         Page<Post> postPage = postRepository.getPostsByAuthorId(id, pageable);
 
-        return postPage.map(entityToDtoMapper::convertToPostDto);
+        return postPage.map(dtoAssembler::convertToPostDto);
 
     }
 
@@ -91,7 +86,7 @@ public class PostService {
 
         postDTO.setAuthor(authorDto);
         postDTO.setCreationDate(LocalDateTime.now());
-        Post post = entityToDtoMapper.convertDtoToPost(postDTO);
+        Post post = dtoAssembler.convertDtoToPost(postDTO);
         postRepository.save(post);
         postDTO.setId(post.getId());
         return postDTO;
@@ -112,7 +107,7 @@ public class PostService {
         }
         postRepository.save(post);
 
-        return entityToDtoMapper.convertToPostDto(post);
+        return dtoAssembler.convertToPostDto(post);
     }
 
     public void deletePost(Long id) {
@@ -133,7 +128,7 @@ public class PostService {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new DataNotFoundException("Category not found!"));
         post.setCategory(category);
 
-        return entityToDtoMapper.convertToPostDto(post);
+        return dtoAssembler.convertToPostDto(post);
 
     }
 

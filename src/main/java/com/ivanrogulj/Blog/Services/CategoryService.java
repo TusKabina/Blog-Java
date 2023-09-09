@@ -2,7 +2,6 @@ package com.ivanrogulj.Blog.Services;
 
 import com.ivanrogulj.Blog.DTO.CategoryDTO;
 import com.ivanrogulj.Blog.Entities.Category;
-import com.ivanrogulj.Blog.Entities.User;
 import com.ivanrogulj.Blog.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Blog.Repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +15,16 @@ public class CategoryService {
 
 
     private final CategoryRepository categoryRepository;
-    private final EntityToDtoMapper entityToDtoMapper;
+    private final DTOAssembler dtoAssembler;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, EntityToDtoMapper entityToDtoMapper) {
+    public CategoryService(CategoryRepository categoryRepository, DTOAssembler dtoAssembler) {
         this.categoryRepository = categoryRepository;
-        this.entityToDtoMapper = entityToDtoMapper;
+        this.dtoAssembler = dtoAssembler;
     }
 
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-       Category category = entityToDtoMapper.convertDtoToCategory(categoryDTO);
+       Category category = dtoAssembler.convertDtoToCategory(categoryDTO);
        categoryDTO.setId(category.getId());
         categoryRepository.save(category);
         return categoryDTO;
@@ -33,7 +32,7 @@ public class CategoryService {
 
     public CategoryDTO findById(long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Category not found"));
-        return entityToDtoMapper.convertToCategoryDto(category);
+        return dtoAssembler.convertToCategoryDto(category);
     }
 
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
@@ -42,14 +41,14 @@ public class CategoryService {
         {
             category.setName(categoryDTO.getName());
         }
-        return entityToDtoMapper.convertToCategoryDto(category);
+        return dtoAssembler.convertToCategoryDto(category);
 
     }
 
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
-                .map(entityToDtoMapper::convertToCategoryDto)
+                .map(dtoAssembler::convertToCategoryDto)
                 .collect(Collectors.toList());
     }
     public void deleteCategory(long id) {

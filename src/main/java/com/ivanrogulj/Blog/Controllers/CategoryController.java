@@ -1,9 +1,7 @@
 package com.ivanrogulj.Blog.Controllers;
 
 import com.ivanrogulj.Blog.DTO.CategoryDTO;
-import com.ivanrogulj.Blog.Entities.Category;
 import com.ivanrogulj.Blog.Services.CategoryService;
-import com.ivanrogulj.Blog.Services.EntityToDtoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
