@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.3/css/bootstrap.min.css">
+    <title>My Blog</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">My Blog</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/users">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/categories">Categories</a>
+            </li>
+        </ul>
+    </div>
+    <form class="form-inline my-2 my-lg-0" th:action="@{/search}" method="get">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" aria-label="Search" id="searchInput" name="query">
+            <div class="input-group-append">
+                <select class="custom-select" id="searchCategory" name="category">
+                    <option value="users">Users</option>
+                    <option value="posts">Posts</option>
+                </select>
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+    <ul class="navbar-nav ml-auto">
+        <!-- Check if the user is authenticated -->
+        <li th:if="${#httpServletRequest.remoteUser eq null}" class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+        </li>
+        <li th:if="${#httpServletRequest.remoteUser eq null}" class="nav-item">
+            <a class="nav-link" href="/register">Register</a>
+        </li>
+        <!-- Check if the user is an admin (customize as needed) -->
+        <li th:if="${#httpServletRequest.remoteUser != null and #authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+        </li>
+        <!-- Check if the user is authenticated -->
+        <li th:if="${#httpServletRequest.remoteUser != null}" class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Content section for displaying search results -->
+<div class="container mt-5">
+    <h1>Search Results</h1>
+    <!-- Display search results here based on your application logic -->
+    <!-- Example: -->
+    <ul th:if="${searchResults != null}" class="list-group">
+        <li th:each="result : ${searchResults}" class="list-group-item" th:text="${result.name}"></li>
+    </ul>
+</div>
+
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+</body>
+</html>
