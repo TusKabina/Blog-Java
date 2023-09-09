@@ -1,5 +1,6 @@
 package com.ivanrogulj.Backend.Controllers;
 
+import com.ivanrogulj.Backend.DTO.UserDTO;
 import com.ivanrogulj.Backend.DTO.UserLoginRequest;
 import com.ivanrogulj.Backend.DTO.UserRegistrationRequest;
 import com.ivanrogulj.Backend.Entities.Role;
@@ -7,6 +8,7 @@ import com.ivanrogulj.Backend.Entities.User;
 import com.ivanrogulj.Backend.Repositories.RoleRepository;
 import com.ivanrogulj.Backend.Repositories.UserRepository;
 import com.ivanrogulj.Backend.Services.CustomUserDetailsService;
+import com.ivanrogulj.Backend.Services.DTOAssembler;
 import com.ivanrogulj.Backend.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,14 +39,17 @@ public class AuthController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+    private final DTOAssembler dtoAssembler;
+
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, CustomUserDetailsService customUserDetailsService, UserService userService, PasswordEncoder passwordEncoder) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, CustomUserDetailsService customUserDetailsService, UserService userService, PasswordEncoder passwordEncoder, DTOAssembler dtoAssembler) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.customUserDetailsService = customUserDetailsService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.dtoAssembler = dtoAssembler;
     }
 
 
@@ -69,11 +74,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody UserLoginRequest loginDto) {
+    public ResponseEntity<UserDTO> authenticateUser(@RequestBody UserLoginRequest loginDto) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User login successfully!...", HttpStatus.OK);
+        User user = userService.getUserByUsername(loginDto.getUsername());
+        UserDTO userDTO = dtoAssembler.convertUserToUserDTO(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @PostMapping("/logout")

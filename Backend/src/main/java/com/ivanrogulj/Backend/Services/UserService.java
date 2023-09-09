@@ -88,10 +88,12 @@ public class UserService {
 
 
 
-    public User getLoggedInUser() {
+    public UserDTO getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loggedInUsername = auth.getName();
-        return userRepository.findByUsername(loggedInUsername).orElseThrow(() -> new DataNotFoundException("User not found!"));
+        User user = userRepository.findByUsername(loggedInUsername).orElseThrow(() -> new DataNotFoundException("User not found!"));
+        UserDTO userDTO = dtoAssembler.convertUserToUserDTO(user);
+        return userDTO;
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
