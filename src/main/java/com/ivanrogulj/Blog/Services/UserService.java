@@ -95,7 +95,7 @@ public class UserService {
             }
         }
         try {
-            response.sendRedirect("/auth/login");
+            response.sendRedirect("/login");
         } catch (IOException e) {
             throw new IOException("Exception while trying to redirect user to login!");
         }
