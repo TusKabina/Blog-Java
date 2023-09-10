@@ -11,6 +11,8 @@ import com.ivanrogulj.Backend.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,23 +36,39 @@ public class ExploreController {
     }
 
     @GetMapping("/explore")
-    public String explorePage(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "category", required = false) Long categoryId, Model model) {
-        int pageSize = 10; // Set the page size as needed
+    public String explorePage(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "category", required = false) Long categoryId,
+                              @RequestParam(required = false) String sortBy, Model model) {
+
+        int pageSize = 10;
+        Sort.Direction direction = Sort.Direction.ASC;
+        Sort sort = null;
+        if ("title".equals(sortBy)) {
+            sort = Sort.by("title");
+        } else if ("author".equals(sortBy)) {
+            sort = Sort.by("author.fullName");
+        } else if ("creationDate".equals(sortBy)) {
+            sort = Sort.by("creationDate").descending();
+        }
+
         Page<PostDTO> postsPage;
         UserDTO loggedInUser = userService.getLoggedInUser();
         List<CategoryDTO> categories = categoryService.getAllCategories();
+        Pageable pageable = PageRequest.of(page, 4, sort != null ? sort : Sort.by("creationDate").descending());
 
 
         if (categoryId != null) {
-            postsPage = postService.getPostsByCategory(categoryId, PageRequest.of(page, pageSize));
+            postsPage = postService.getPostsByCategory(categoryId, pageable);
+
         } else {
-            postsPage = postService.getAllPosts(PageRequest.of(page, pageSize));
+            postsPage = postService.getAllPosts(pageable);
         }
 
         model.addAttribute("loggedInUser",loggedInUser);
         model.addAttribute("loggedIn", true);
         model.addAttribute("postsPage", postsPage);
         model.addAttribute("categories", categories);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sortBy", sortBy);
 
         String roleNameToFind = "ROLE_ADMIN";
         Set<Role> roles = loggedInUser.getRoles();

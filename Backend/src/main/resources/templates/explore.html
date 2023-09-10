@@ -54,8 +54,20 @@
           <th:block th:each="category : ${categories}">
             <option th:value="${category.id}"
                     th:text="${category.name}"
-                    th:selected="${category.id == categoryId}"></option>
+                    th:classappend="${category.id == categoryId} ? 'selected' : ''"></option>
           </th:block>
+        </select>
+      </div>
+
+
+
+      <!-- Sort by options -->
+      <div class="form-group">
+        <label for="sortBy">Sort by:</label>
+        <select id="sortBy" class="form-control">
+          <option value="creationDate" th:selected="${sortBy == 'creationDate'}">Creation Date</option>
+          <option value="title" th:selected="${sortBy == 'title'}">Title</option>
+          <option value="author" th:selected="${sortBy == 'author'}">Author</option>
         </select>
       </div>
 
@@ -75,13 +87,13 @@
       <nav aria-label="Page navigation">
         <ul class="pagination">
           <li th:if="${postsPage.hasPrevious()}" class="page-item">
-            <a class="page-link" th:href="@{/explore(page=${postsPage.number - 1})}">Previous</a>
+            <a class="page-link" th:href="@{/explore(page=${postsPage.number - 1}, category=${categoryId}, sortBy=${sortBy})}">Previous</a>
           </li>
           <li th:each="page : ${#numbers.sequence(0, postsPage.totalPages - 1)}" class="page-item">
-            <a class="page-link" th:href="@{/explore(page=${page})}" th:text="${page + 1}"></a>
+            <a class="page-link" th:href="@{/explore(page=${page}, category=${categoryId}, sortBy=${sortBy})}" th:text="${page + 1}"></a>
           </li>
           <li th:if="${postsPage.hasNext()}" class="page-item">
-            <a class="page-link" th:href="@{/explore(page=${postsPage.number + 1})}">Next</a>
+            <a class="page-link" th:href="@{/explore(page=${postsPage.number + 1}, category=${categoryId}, sortBy=${sortBy})}">Next</a>
           </li>
         </ul>
       </nav>
@@ -99,14 +111,37 @@
   // Function to handle category filter change
   function filterByCategory() {
     var selectedCategoryId = $("#category").val(); // Get the selected category ID
-    window.location.href = "/explore?category=" + selectedCategoryId; // Redirect to the explore page with the selected category
+    var selectedSortBy = $("#sortBy").val(); // Get the selected sorting option
+    var url = "/explore?category=" + selectedCategoryId;
+
+    // Append sorting option to the URL if selected
+    if (selectedSortBy) {
+      url += "&sortBy=" + selectedSortBy;
+    }
+
+    window.location.href = url; // Redirect to the explore page with the selected category and sorting
   }
 
-  // Attach the change event handler to the category dropdown
+  // Attach the change event handlers to the category and sort dropdowns
   $(document).ready(function() {
     $("#category").change(filterByCategory);
+    $("#sortBy").change(filterByCategory); // Attach to the sort dropdown
+
+    // Set the selected values in the dropdowns based on URL parameters
+    var urlParams = new URLSearchParams(window.location.search);
+    var categoryId = urlParams.get("category");
+    var sortBy = urlParams.get("sortBy");
+
+    if (categoryId) {
+      $("#category").val(categoryId);
+    }
+
+    if (sortBy) {
+      $("#sortBy").val(sortBy);
+    }
   });
 </script>
+
 
 </body>
 </html>
