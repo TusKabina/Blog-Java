@@ -51,7 +51,15 @@ public class SecurityConfig  {
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/register","/auth/login","/api/search/users/**", "/api/search/posts","/api/users/loggedIn").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/api/**","/auth/logout","/home","/post/**","/updatePost","/post/*")
+                .authorizeHttpRequests().requestMatchers("/api/**",
+                         "/auth/logout",
+                         "/home",
+                         "/post/**",
+                         "/updatePost",
+                         "/post/*",
+                         "/comment/**",
+                         "comment/view",
+                         "/comment/view/**")
                 .authenticated()
                 .and()
                  .formLogin()

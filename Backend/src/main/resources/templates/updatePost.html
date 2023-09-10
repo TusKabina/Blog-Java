@@ -21,6 +21,15 @@
           <label for="content">Content</label>
           <textarea class="form-control" id="content" th:field="*{content}"></textarea>
         </div>
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select class="form-control" id="category" th:field="*{category.id}">
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.name}"
+                    th:selected="${category.id == post.category.id}"></option>
+          </select>
+        </div>
         <button type="submit" class="btn btn-primary">Save</button>
       </form>
     </div>

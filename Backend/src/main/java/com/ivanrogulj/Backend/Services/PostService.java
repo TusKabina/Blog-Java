@@ -97,17 +97,22 @@ public class PostService {
         {
             throw new ForbiddenException("You are not authorized for this operation!");
         }
-        Post post = postRepository.getPostsById(id).orElseThrow(() -> new DataNotFoundException("Post not found!"));
-        if(postDTO.getContent() != null) {
-            post.setContent(postDTO.getContent());
+        Post requestPost = dtoAssembler.convertDtoToPost(postDTO);
+        Post postDb = postRepository.getPostsById(id).orElseThrow(() -> new DataNotFoundException("Post not found!"));
+        if(requestPost.getContent() != null) {
+            postDb.setContent(postDTO.getContent());
         }
-        if(postDTO.getTitle() != null)
+        if(requestPost.getTitle() != null)
         {
-            post.setTitle(postDTO.getTitle());
+            postDb.setTitle(postDTO.getTitle());
         }
-        postRepository.save(post);
+        if(requestPost.getCategory() != null)
+        {
+            postDb.setCategory(requestPost.getCategory());
+        }
+        postRepository.save(postDb);
 
-        return dtoAssembler.convertToPostDto(post);
+        return dtoAssembler.convertToPostDto(postDb);
     }
 
     public void deletePost(Long id) {

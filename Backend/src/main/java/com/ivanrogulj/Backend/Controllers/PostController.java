@@ -47,11 +47,7 @@ public class PostController {
                     .filter(role -> role.getName().equals(roleNameToFind))
                     .findFirst().orElse(null);
 
-            boolean isAdmin = false;
-            if(foundRole != null)
-            {
-                isAdmin = true;
-            }
+            boolean isAdmin = foundRole != null;
             model.addAttribute("isAdmin",isAdmin);
             return "post"; // Render the "post.html" template
         } else {
@@ -64,12 +60,17 @@ public class PostController {
     public String getUpdatePostForm(@PathVariable Long postId, Model model) {
         // Retrieve the post by ID and populate the update form
         PostDTO post = postService.getPostById(postId);
+        UserDTO loggedInUser = userService.getLoggedInUser();
+        List<CategoryDTO> categories = categoryService.getAllCategories();
         model.addAttribute("post", post);
+        model.addAttribute("categories", categories);
         return "updatePost"; // Create an "update-post.html" template for the update form
     }
     @PutMapping("/post/update/{postId}")
     public String updatePost(@PathVariable Long postId, @ModelAttribute PostDTO updatedPost) {
 
+        PostDTO postDb = postService.getPostById(postId);
+        updatedPost.setAuthor(postDb.getAuthor());
         postService.updatePost(postId, updatedPost);
         return "redirect:/post/{postId}";
     }
