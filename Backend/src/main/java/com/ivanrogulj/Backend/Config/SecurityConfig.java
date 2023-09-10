@@ -59,7 +59,8 @@ public class SecurityConfig  {
                          "/post/*",
                          "/comment/**",
                          "comment/view",
-                         "/comment/view/**")
+                         "/comment/view/**",
+                         "/explore")
                 .authenticated()
                 .and()
                  .formLogin()

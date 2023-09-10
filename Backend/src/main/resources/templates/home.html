@@ -7,6 +7,7 @@
 </head>
 <body>
 <!-- Header Section -->
+<!-- Header Section -->
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
@@ -17,6 +18,9 @@
       <a th:if="${isAdmin}" href="/admin">Admin</a>
 
       <a class="btn btn-primary" th:if="${loggedIn}" th:href="@{/post/create}">Create Post</a>
+
+      <!-- Explore Link -->
+      <a class="nav-link" th:href="@{/explore}">Explore</a>
 
       <!-- Login/Logout Button (You can use a conditional th:if here) -->
       <a href="#" class="btn btn-primary ml-auto" th:text="${loggedIn ? 'Logout' : 'Login'}">Login/Logout</a>
@@ -33,6 +37,7 @@
     </div>
   </nav>
 </header>
+
 
 <!-- User Information Section -->
 <section class="container mt-4">
