@@ -83,4 +83,10 @@ public class PostController {
         postService.createPost(postDTO, userId);
         return "redirect:/home";
     }
+
+    @PostMapping("/post/delete/{postId}")
+    public String deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
+        return "redirect:/home";
+    }
 }
