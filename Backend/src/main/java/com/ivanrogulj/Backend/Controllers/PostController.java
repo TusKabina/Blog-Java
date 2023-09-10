@@ -1,14 +1,17 @@
 package com.ivanrogulj.Backend.Controllers;
 
+import com.ivanrogulj.Backend.DTO.CategoryDTO;
 import com.ivanrogulj.Backend.DTO.PostDTO;
 import com.ivanrogulj.Backend.DTO.UserDTO;
 import com.ivanrogulj.Backend.Entities.Role;
+import com.ivanrogulj.Backend.Services.CategoryService;
 import com.ivanrogulj.Backend.Services.PostService;
 import com.ivanrogulj.Backend.Services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -17,10 +20,12 @@ public class PostController {
 
     private final PostService postService;
     private final UserService userService;
+    private final CategoryService categoryService;
 
-    public PostController(PostService postService, UserService userService) {
+    public PostController(PostService postService, UserService userService, CategoryService categoryService) {
         this.postService = postService;
         this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/post/{postId}")
@@ -73,7 +78,9 @@ public class PostController {
     @GetMapping("/post/create")
     public String getCreatePostForm(Model model) {
         UserDTO user = userService.getLoggedInUser();
+        List<CategoryDTO> categories = categoryService.getAllCategories();
         model.addAttribute("userId", user.getId());
+        model.addAttribute("categories", categories);
         model.addAttribute("post", new PostDTO());
         return "createPost";
     }
