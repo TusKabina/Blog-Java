@@ -50,6 +50,9 @@
           <h5 class="card-title"><strong th:text="${post.title}">Post Title</strong></h5>
           <p><strong>Category:</strong> <span th:text="${post.category.name}">Category Name</span></p>
 
+          <!-- Author -->
+          <p class="float-right"><strong>Author:</strong> <span th:text="${post.author.fullName}">Author Name</span></p>
+
           <!-- Post Content Box -->
           <div class="card">
             <div class="card-body">
@@ -83,8 +86,8 @@
       </div>
     </div>
   </div>
-
 </section>
+
 
 
 <!--&lt;!&ndash; Comments Section &ndash;&gt;-->
