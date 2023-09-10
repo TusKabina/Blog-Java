@@ -1,4 +1,4 @@
-package com.ivanrogulj.Backend.Controllers;
+package com.ivanrogulj.Backend.Controllers.BackendControllers;
 import com.ivanrogulj.Backend.DTO.UserDTO;
 import com.ivanrogulj.Backend.Entities.User;
 import com.ivanrogulj.Backend.Services.UserService;

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>User Profile</title>
+  <!-- Include Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Header Section -->
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <!-- User's Name -->
+      <a class="navbar-brand" th:text="${loggedInUser.fullName}">User's Name</a>
+
+      <!-- Admin Label (Rendered conditionally for admin users) -->
+      <a th:if="${isAdmin}" href="/admin">Admin</a>
+
+      <a class="btn btn-primary" th:if="${loggedIn}" th:href="@{/post/create}">Create Post</a>
+
+      <!-- Login/Logout Button (You can use a conditional th:if here) -->
+      <a href="#" class="btn btn-primary ml-auto" th:text="${loggedIn ? 'Logout' : 'Login'}">Login/Logout</a>
+
+      <!-- Search Form -->
+      <form class="form-inline ml-3">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <select class="custom-select mr-sm-2">
+          <option value="user">Search Users</option>
+          <option value="posts">Search Posts</option>
+        </select>
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+</header>
+
+<!-- User Information Section -->
+<section class="container mt-4">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>User Information</h2>
+      <ul class="list-group">
+        <!-- Display user information (name, email, etc.) here -->
+        <li class="list-group-item">Full Name: <span th:text="${loggedInUser.fullName}">User's Name</span></li>
+        <li class="list-group-item">Email: <span th:text="${loggedInUser.email}">loggedInUser@example.com</span></li>
+        <!-- Add more loggedInUser information fields as needed -->
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- User's Posts Section -->
+<section class="container mt-4">
+  <!-- Pagination controls -->
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <ul class="pagination">
+          <li th:if="${postsPage.hasPrevious()}" class="page-item">
+            <a class="page-link" th:href="@{/home(page=${postsPage.number - 1})}">Previous</a>
+          </li>
+          <li th:each="page : ${#numbers.sequence(0, postsPage.totalPages - 1)}" class="page-item">
+            <a class="page-link" th:href="@{/home(page=${page})}" th:text="${page + 1}"></a>
+          </li>
+          <li th:if="${postsPage.hasNext()}" class="page-item">
+            <a class="page-link" th:href="@{/home(page=${postsPage.number + 1})}">Next</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- List of Posts with Links to Details -->
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <h2>User's Posts</h2>
+      <ul class="list-group">
+        <li th:each="post : ${postsPage.content}" class="list-group-item">
+          <a th:href="@{/post/{postId}(postId=${post.id})}">
+            <h5 class="list-group-item-heading" th:text="${post.title}">Post Title</h5>
+          </a>
+          <p class="list-group-item-text" th:text="${post.content}">Post Content</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- Include Bootstrap and JavaScript libraries -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

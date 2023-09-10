@@ -1,4 +1,4 @@
-package com.ivanrogulj.Backend.Controllers;
+package com.ivanrogulj.Backend.Controllers.BackendControllers;
 
 import com.ivanrogulj.Backend.DTO.UserDTO;
 import com.ivanrogulj.Backend.DTO.UserLoginRequest;
@@ -56,11 +56,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationRequest signUpDto) {
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
-            return new ResponseEntity<>("Username already exist!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Username already exist!", HttpStatus.CONFLICT);
         }
         if(userRepository.existsByEmail(signUpDto.getEmail()))
         {
-            return new ResponseEntity<>("User with that email already exist!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User with that email already exist!", HttpStatus.CONFLICT);
         }
         User user = new User();
         user.setUsername(signUpDto.getUsername());
@@ -70,7 +70,7 @@ public class AuthController {
         Role roles = roleRepository.findByName("ROLE_USER").get();
         user.setRoles(Collections.singleton(roles));
         userRepository.save(user);
-        return new ResponseEntity<>("User is registered successfully!", HttpStatus.OK);
+        return new ResponseEntity<>("User is registered successfully!", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

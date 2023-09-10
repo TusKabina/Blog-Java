@@ -92,8 +92,7 @@ public class UserService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String loggedInUsername = auth.getName();
         User user = userRepository.findByUsername(loggedInUsername).orElseThrow(() -> new DataNotFoundException("User not found!"));
-        UserDTO userDTO = dtoAssembler.convertUserToUserDTO(user);
-        return userDTO;
+        return dtoAssembler.convertUserToUserDTO(user);
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {

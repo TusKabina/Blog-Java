@@ -1,4 +1,4 @@
-package com.ivanrogulj.Backend.Controllers;
+package com.ivanrogulj.Backend.Controllers.BackendControllers;
 
 import com.ivanrogulj.Backend.DTO.CategoryDTO;
 import com.ivanrogulj.Backend.Services.CategoryService;

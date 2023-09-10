@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Home</title>
+</head>
+<body>
+<h1>Welcome, <span th:text="${loggedInUser.username}"></span>!</h1>
+
+<section class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>User's Posts</h2>
+      <ul class="list-group">
+        <!-- Display the list of user's posts here -->
+        <li th:each="post : ${postsPage.content}" class="list-group-item">
+          <h4 th:text="${post.title}">Post Title</h4>
+          <p th:text="${post.content}">Post Content</p>
+
+          <!-- Check if the logged-in user is the owner of the post -->
+          <div th:if="${post.author.username == loggedInUser.username}">
+            <button>Edit</button>
+            <button>Delete</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Pagination controls -->
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <ul class="pagination">
+        <li th:if="${postsPage.hasPrevious()}" class="page-item">
+          <a class="page-link" th:href="@{'/home?page=' + (postsPage.number - 1)}">Previous</a>
+        </li>
+        <li th:each="page : ${postsPage.getNumberSequence()}" class="page-item">
+          <a class="page-link" th:href="@{'/home?page=' + page} th:text="${page + 1}"></a>
+        </li>
+        <li th:if="${postsPage.hasNext()}" class="page-item">
+          <a class="page-link" th:href="@{'/home?page=' + (postsPage.number + 1)}">Next</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
-//package com.ivanrogulj.Blog.Security;
+//package com.ivanrogulj.Backend.Security;
 //
-//import com.ivanrogulj.Blog.Services.AuthenticationService;
+//import com.ivanrogulj.Backend.Services.AuthenticationService;
 //import jakarta.servlet.FilterChain;
 //import jakarta.servlet.ServletException;
 //import jakarta.servlet.ServletRequest;

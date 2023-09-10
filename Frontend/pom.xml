@@ -36,7 +36,6 @@
 			<version>3.5.1</version> <!-- Use the version you prefer -->
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
