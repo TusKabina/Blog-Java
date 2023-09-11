@@ -9,6 +9,7 @@ import com.ivanrogulj.Backend.Services.PostService;
 import com.ivanrogulj.Backend.Services.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,7 @@ public class HomeController {
 
         return "home";
     }
+
 
     @GetMapping("/profile/{userId}")
     public String userProfile(@PathVariable Long userId, Model model, @RequestParam(name = "page", defaultValue = "0") int page) {

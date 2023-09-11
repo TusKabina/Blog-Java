@@ -12,10 +12,9 @@ public class LoginController {
     }
 
 
-//    @GetMapping("/login-error")
-//    public String login(Model model) {
-//        model.addAttribute("errorMessage", "Bad credentials");
-//        return "login";
-//    }
+    @GetMapping("/login-error")
+    public String login(Model model) {
+        return "login";
+    }
 
 }
