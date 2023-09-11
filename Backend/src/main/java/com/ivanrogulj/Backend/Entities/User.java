@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +31,10 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Post> posts = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
      @JsonIgnore
     private List<Comment> comments;
 
