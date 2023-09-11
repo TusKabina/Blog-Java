@@ -3,6 +3,7 @@ package com.ivanrogulj.Backend.Controllers;
 import com.ivanrogulj.Backend.DTO.CategoryDTO;
 import com.ivanrogulj.Backend.DTO.PostDTO;
 import com.ivanrogulj.Backend.DTO.UserDTO;
+import com.ivanrogulj.Backend.Entities.Category;
 import com.ivanrogulj.Backend.Services.CategoryService;
 import com.ivanrogulj.Backend.Services.UserService;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -70,4 +73,30 @@ public class AdminController {
         categoryService.createCategory(categoryDTO);
         return "redirect:/admin/view-users";
     }
+
+    @GetMapping("/update-category/{id}")
+    public String getUpdateCategoryForm(@PathVariable Long id, Model model) {
+        CategoryDTO categoryDTO = categoryService.findById(id);
+        model.addAttribute("category", categoryDTO);
+        return "updateCategory";
+    }
+
+    @PostMapping("/update-category/{id}")
+    public String updateCategory(@PathVariable Long id, @ModelAttribute CategoryDTO categoryDTO) {
+        categoryService.updateCategory(id, categoryDTO);
+        return "redirect:/admin/view-categories";
+    }
+
+    @GetMapping("/view-categories")
+    public String viewAllCategories(Model model) {
+        UserDTO loggedInUserDetails = userService.getLoggedInUser();
+        List<CategoryDTO> categories = categoryService.getAllCategories();
+        boolean isAdmin = userService.isAdmin(loggedInUserDetails);
+
+        model.addAttribute("loggedInUser", loggedInUserDetails);
+        model.addAttribute("isAdmin",isAdmin);
+        model.addAttribute("categories",categories);
+        return "viewAllCategories";
+    }
+
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>View All Categories</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" th:text="${loggedInUser.fullName}" th:href="@{/home}">User's Name</a>
+      <a th:if="${isAdmin}" href="/admin">Admin</a>
+
+      <!--      <a class="btn btn-primary" th:if="${loggedIn}" th:href="@{/post/create}">Create Post</a>-->
+      <a class="btn btn-primary" th:href="@{/post/create}">Create Post</a>
+      <a class="nav-link" th:href="@{/explore}">Explore</a>
+      <a href="/logout" class="btn btn-primary ml-auto">Logout</a>
+      <form class="form-inline ml-3" th:action="@{/search}" method="get">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+        <input type="hidden" name="searchType" value="user">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+</header>
+<section class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>All Categories</h2>
+      <div th:each="category : ${categories}">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title" th:text="${category.name}"></h5>
+            <!-- Here, we'll add a link to the update category form, passing the category ID in the URL -->
+            <a th:href="@{/admin/update-category/{id}(id=${category.id})}" class="btn btn-primary">Update Category</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Include Bootstrap and JavaScript libraries -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

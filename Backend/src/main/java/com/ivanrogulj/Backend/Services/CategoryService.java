@@ -40,6 +40,7 @@ public class CategoryService {
         if(!categoryDTO.getName().isEmpty())
         {
             category.setName(categoryDTO.getName());
+            categoryRepository.save(category);
         }
         return dtoAssembler.convertToCategoryDto(category);
 
