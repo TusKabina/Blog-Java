@@ -25,7 +25,7 @@
 </header>
 
 
-<!-- UserProfile Section -->
+<<!-- UserProfile Section -->
 <section class="container mt-4">
   <div class="row mt-4">
     <div class="col-md-8">
@@ -33,6 +33,12 @@
       <!-- Display user's information here -->
       <p><strong>Full name:</strong> <span th:text="${loggedInUser.fullName}">Username</span></p>
       <p><strong>Email:</strong> <span th:text="${loggedInUser.email}">Email</span></p>
+
+      <a class="btn btn-info" th:href="@{/update-user}">Update Information</a>
+    </div>
+  </div>
+</section>
+
 
 <!-- User Information Section -->
 <section class="container mt-4">

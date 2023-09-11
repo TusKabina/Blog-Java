@@ -61,8 +61,8 @@ public class UserService {
             user.setFullName(userDto.getFullName());
 
         }
-        if (user.getFullName() != null) {
-            user.setUsername(userDto.getUsername());
+        if (user.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
 
         }
         userRepository.save(user);
@@ -77,7 +77,10 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-
+    public Integer getUsersCount()
+    {
+        return userRepository.findAll().size();
+    }
     public UserDTO searchUsersByUsername(String query) {
         User matchingUser = userRepository.findByUsernameContainingIgnoreCase(query);
         return dtoAssembler.convertUserToUserDTO(matchingUser);

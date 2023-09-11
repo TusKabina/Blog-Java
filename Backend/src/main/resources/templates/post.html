@@ -36,8 +36,6 @@
         <div class="card-body">
           <h5 class="card-title"><strong th:text="${post.title}">Post Title</strong></h5>
           <p class="mb-2"><strong>Author:</strong> <a th:text="${post.author.fullName}" th:href="@{/profile/{userId}(userId=${post.author.id})}">Author Name</a></p>
-
-
           <p><strong>Category:</strong> <span th:text="${post.category.name}">Category Name</span></p>
           <!-- Post Content Box -->
           <div class="card">
@@ -51,8 +49,6 @@
     </div>
   </div>
 </section>
-
-  <!-- Update and Delete buttons for the post (only shown for admin or post owner) -->
   <div th:if="${isAdmin or post.author.id == loggedInUser.id}" class="container mt-4">
     <div class="row">
       <div class="col-md-12">
@@ -63,8 +59,6 @@
       </div>
     </div>
   </div>
-
-  <!-- View and Create Comment buttons (accessible to everyone) -->
   <div class="container mt-4">
     <div class="row">
       <div class="col-md-12">
@@ -75,38 +69,6 @@
     </div>
   </div>
 </section>
-
-
-
-<!--&lt;!&ndash; Comments Section &ndash;&gt;-->
-<!--<section class="container mt-4">-->
-<!--  <div class="row">-->
-<!--    <div class="col-md-8">-->
-<!--      <h2>Comments</h2>-->
-<!--      <ul class="list-group">-->
-<!--        <li th:each="comment : ${post.comments}" class="list-group-item">-->
-<!--          <p class="list-group-item-text">-->
-<!--            <strong th:text="${comment.user.username}">Username</strong>:-->
-<!--            <span th:text="${comment.content}">Comment Content</span>-->
-<!--          </p>-->
-<!--          <p class="list-group-item-text">-->
-<!--            <em th:text="${#temporals.format(comment.creationDate, 'dd.MM.yyyy HH:mm:ss')}">Creation Date</em>-->
-<!--          </p>-->
-<!--          &lt;!&ndash; Delete button for the comment &ndash;&gt;-->
-<!--          <div th:if="${comment.user.id == loggedInUser.id || post.author.id == loggedInUser.id}">-->
-<!--            <a href="#" class="btn btn-danger">Delete Comment</a>-->
-<!--          </div>-->
-<!--        </li>-->
-<!--      </ul>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</section>-->
-
-
-
-
-
-<!-- Include Bootstrap and JavaScript libraries -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

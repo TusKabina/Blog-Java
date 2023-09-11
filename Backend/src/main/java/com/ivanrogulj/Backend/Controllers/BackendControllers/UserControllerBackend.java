@@ -13,13 +13,13 @@ import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class UserControllerBackend {
 
     private final UserService userService;
 
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserControllerBackend(UserService userService) {
         this.userService = userService;
     }
 
