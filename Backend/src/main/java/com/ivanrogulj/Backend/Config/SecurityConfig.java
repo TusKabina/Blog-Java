@@ -49,7 +49,7 @@ public class SecurityConfig  {
          http.sessionManagement((session) -> session
             .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)).csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/register","/auth/login","/api/search/users/**", "/api/search/posts","/api/users/loggedIn").permitAll()
+                .requestMatchers("/auth/register","/auth/login","/api/search/users/**", "/api/search/posts","/api/users/loggedIn","/register").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/**",
                          "/auth/logout",
