@@ -1,5 +1,7 @@
 package com.ivanrogulj.Backend.Controllers;
 
+import com.ivanrogulj.Backend.DTO.CategoryDTO;
+import com.ivanrogulj.Backend.DTO.PostDTO;
 import com.ivanrogulj.Backend.DTO.UserDTO;
 import com.ivanrogulj.Backend.Services.CategoryService;
 import com.ivanrogulj.Backend.Services.UserService;
@@ -53,6 +55,19 @@ public class AdminController {
     @PostMapping("/delete-user/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return "redirect:/admin/view-users";
+    }
+
+    @GetMapping("/create-category")
+    public String getCreateCategoryForm(Model model) {
+        model.addAttribute("category", new CategoryDTO());
+        // You can add any attributes you want to pass to the view
+        return "createCategory";
+    }
+
+    @PostMapping("/create-category")
+    public String createCategory( @ModelAttribute CategoryDTO categoryDTO) {
+        categoryService.createCategory(categoryDTO);
         return "redirect:/admin/view-users";
     }
 }
