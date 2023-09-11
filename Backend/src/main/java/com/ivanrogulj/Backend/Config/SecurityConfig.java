@@ -43,38 +43,70 @@ public class SecurityConfig  {
     }
 
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception
+//    {
+//         http.csrf().disable()
+//                .authorizeHttpRequests()
+//                .requestMatchers(
+//                        "/register"
+//                ).permitAll()
+//                .requestMatchers("/api/**",
+//                         "/logout",
+//                         "/home",
+//                         "/post/**",
+//                         "/updatePost",
+//                         "/register",
+//                         "/post/*",
+//                         "/comment/**",
+//                         "comment/view",
+//                         "/comment/view/**",
+//                         "/explore",
+//                         "/profile/**",
+//                         "/search")
+//                .authenticated()
+//                .and()
+//                 .formLogin()
+//                 .loginPage("/login")
+//                 .defaultSuccessUrl("/home")
+//                 .permitAll()
+//                 .and()
+//                .logout()
+//                 .logoutSuccessUrl("/login?logout")
+//                 .permitAll()
+//                .deleteCookies("JSESSIONID");
+//
+//
+//         return http.build();
+//    }
+
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception
-    {
-         http.sessionManagement((session) -> session
-            .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)).csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/auth/register","/auth/login","/api/search/users/**", "/api/search/posts","/api/users/loggedIn","/register").permitAll()
-                .and()
-                .authorizeHttpRequests().requestMatchers("/api/**",
-                         "/auth/logout",
-                         "/home",
-                         "/post/**",
-                         "/updatePost",
-                         "/post/*",
-                         "/comment/**",
-                         "comment/view",
-                         "/comment/view/**",
-                         "/explore")
-                .authenticated()
-                .and()
-                 .formLogin()
-                 .loginPage("/login")
-                 .defaultSuccessUrl("/home")
-                 .permitAll()
-                 .and()
-                .logout()
-                .logoutUrl("/auth/logout")
-                .deleteCookies("JSESSIONID");
-
-
-         return http.build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(
+                                "/register",
+                                "/login",
+                                "/logout"
+                        ).permitAll()
+                        .requestMatchers("/admin/**").hasAnyAuthority("Admin")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login").permitAll()
+                        .defaultSuccessUrl("/home")
+                        .failureUrl("/login-error")
+                )
+                .logout(logout -> logout
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .logoutSuccessUrl("/login")
+                )
+        ;
+        return http.build();
     }
+
 
 //    @Bean
 //    SecurityFilterChain web(HttpSecurity http) throws Exception {

@@ -39,8 +39,6 @@ public class ExploreController {
     public String explorePage(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "category", required = false) Long categoryId,
                               @RequestParam(required = false) String sortBy, Model model) {
 
-        int pageSize = 10;
-        Sort.Direction direction = Sort.Direction.ASC;
         Sort sort = null;
         if ("title".equals(sortBy)) {
             sort = Sort.by("title");
@@ -63,21 +61,14 @@ public class ExploreController {
             postsPage = postService.getAllPosts(pageable);
         }
 
+        boolean isAdmin = userService.isAdmin(loggedInUser);
+
         model.addAttribute("loggedInUser",loggedInUser);
         model.addAttribute("loggedIn", true);
         model.addAttribute("postsPage", postsPage);
         model.addAttribute("categories", categories);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("sortBy", sortBy);
-
-        String roleNameToFind = "ROLE_ADMIN";
-        Set<Role> roles = loggedInUser.getRoles();
-        Role foundRole = roles.stream()
-                .filter(role -> role.getName().equals(roleNameToFind))
-                .findFirst().orElse(null);
-
-        boolean isAdmin = foundRole != null;
-
         model.addAttribute("isAdmin",isAdmin);
 
         return "explore"; // Return the name of your Explore HTML template

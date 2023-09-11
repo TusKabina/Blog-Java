@@ -1,6 +1,7 @@
 package com.ivanrogulj.Backend.Services;
 
 import com.ivanrogulj.Backend.DTO.UserDTO;
+import com.ivanrogulj.Backend.Entities.Role;
 import com.ivanrogulj.Backend.Entities.User;
 import com.ivanrogulj.Backend.ExceptionHandler.DataNotFoundException;
 import com.ivanrogulj.Backend.ExceptionHandler.ForbiddenException;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -103,7 +105,7 @@ public class UserService {
                 if (cookie.getName().equals("JSESSIONID")) {
                     cookie.setValue("");
                     cookie.setPath("/");
-                    cookie.setMaxAge(0); // Expire the cookie
+                    cookie.setMaxAge(0);
                     response.addCookie(cookie);
                 }
             }
@@ -113,6 +115,16 @@ public class UserService {
         } catch (IOException e) {
             throw new IOException("Exception while trying to redirect user to login!");
         }
+    }
+
+    public boolean isAdmin(UserDTO userDTO) {
+        String roleNameToFind = "ROLE_ADMIN";
+        Set<Role> roles = userDTO.getRoles();
+        Role foundRole = roles.stream()
+                .filter(role -> role.getName().equals(roleNameToFind))
+                .findFirst().orElse(null);
+
+        return foundRole != null;
     }
 
     private boolean isAuthorized(Long id) {

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -33,28 +34,30 @@ public class HomeController {
     @GetMapping("/home")
     public String home(Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
 
-        UserDTO loggedInUser = userService.getLoggedInUser();
+        UserDTO loggedInUserDetails = userService.getLoggedInUser();
+        Page<PostDTO> postsPage = postService.getPostsByUser(loggedInUserDetails.getId(), PageRequest.of(page, 2));
 
-        // Get a paginated list of posts for the logged-in user
-        Page<PostDTO> postsPage = postService.getPostsByUser(loggedInUser.getId(), PageRequest.of(page, 2));
+        boolean isAdmin = userService.isAdmin(loggedInUserDetails);
 
-
-        String roleNameToFind = "ROLE_ADMIN";
-        model.addAttribute("loggedInUser", loggedInUser);
+        model.addAttribute("loggedInUser", loggedInUserDetails);
         model.addAttribute("postsPage", postsPage);
-        Set<Role> roles = loggedInUser.getRoles();
-         Role foundRole = roles.stream()
-                .filter(role -> role.getName().equals(roleNameToFind))
-                .findFirst().orElse(null);
-
-         boolean isAdmin = false;
-         if(foundRole != null)
-         {
-            isAdmin = true;
-         }
-        System.out.println("ROLE: "+loggedInUser.getRoles());
-        model.addAttribute("loggedIn", true);
         model.addAttribute("isAdmin",isAdmin);
+
         return "home"; // This will render the "home.html" template
+    }
+
+    @GetMapping("/profile/{userId}")
+    public String userProfile(@PathVariable Long userId, Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
+        UserDTO userProfile = userService.getUserById(userId);
+        Page<PostDTO> postsPage = postService.getPostsByUser(userProfile.getId(), PageRequest.of(page, 2));
+        UserDTO loggedInUserDetails = userService.getLoggedInUser();
+
+        boolean isAdmin = userService.isAdmin(loggedInUserDetails);
+
+        model.addAttribute("userProfile", userProfile);
+        model.addAttribute("userPostsPage", postsPage);
+        model.addAttribute("isAdmin",isAdmin);
+
+        return "profile";
     }
 }

@@ -41,13 +41,8 @@ public class PostController {
             model.addAttribute("loggedInUser",loggedInUser);
             model.addAttribute("loggedIn", true);
 
-            String roleNameToFind = "ROLE_ADMIN";
-            Set<Role> roles = loggedInUser.getRoles();
-            Role foundRole = roles.stream()
-                    .filter(role -> role.getName().equals(roleNameToFind))
-                    .findFirst().orElse(null);
+            boolean isAdmin = userService.isAdmin(loggedInUser);
 
-            boolean isAdmin = foundRole != null;
             model.addAttribute("isAdmin",isAdmin);
             return "post"; // Render the "post.html" template
         } else {

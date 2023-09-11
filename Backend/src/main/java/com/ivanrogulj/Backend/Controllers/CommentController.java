@@ -58,12 +58,7 @@ public class CommentController {
         Page<CommentDTO> commentDTO = commentService.getCommentsForPost(postId, PageRequest.of(page, 4));
         PostDTO post = postService.getPostById(postId);
         Long authorId = post.getAuthor().getId();
-        String roleNameToFind = "ROLE_ADMIN";
-        Set<Role> roles = loggedInUser.getRoles();
-        Role foundRole = roles.stream()
-                .filter(role -> role.getName().equals(roleNameToFind))
-                .findFirst().orElse(null);
-        boolean isAdmin = foundRole != null;
+        boolean isAdmin = userService.isAdmin(loggedInUser);
 
         model.addAttribute("isAdmin",isAdmin);
         model.addAttribute("loggedInUser", loggedInUser);

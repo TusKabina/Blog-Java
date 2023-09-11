@@ -1,51 +1,84 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Home</title>
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Welcome, <span th:text="${loggedInUser.username}"></span>!</h1>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <!-- User's Name -->
+      <a class="navbar-brand" th:text="${userProfile.fullName}" th:href="@{/home}">User's Name</a>
 
+
+      <!-- Admin Label (Rendered conditionally for admin users) -->
+      <a th:if="${isAdmin}" href="/admin">Admin</a>
+
+<!--      <a class="btn btn-primary" th:if="${loggedIn}" th:href="@{/post/create}">Create Post</a>-->
+      <a class="btn btn-primary" th:href="@{/post/create}">Create Post</a>
+
+      <!-- Explore Link -->
+      <a class="nav-link" th:href="@{/explore}">Explore</a>
+
+      <a href="/logout" class="btn btn-primary ml-auto">Logout</a>
+
+      <!-- Search Form -->
+      <form class="form-inline ml-3">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <select class="custom-select mr-sm-2">
+          <option value="user">Search Users</option>
+          <option value="posts">Search Posts</option>
+        </select>
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+</header>
+
+<!-- UserProfile Section -->
 <section class="container mt-4">
-  <div class="row">
-    <div class="col-md-12">
-      <h2>User's Posts</h2>
-      <ul class="list-group">
-        <!-- Display the list of user's posts here -->
-        <li th:each="post : ${postsPage.content}" class="list-group-item">
-          <h4 th:text="${post.title}">Post Title</h4>
-          <p th:text="${post.content}">Post Content</p>
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <h2 th:text="${userProfile.username}"></h2>
+      <!-- Display user's information here -->
+      <p><strong>Full name:</strong> <span th:text="${userProfile.fullName}">Username</span></p>
+      <p><strong>Email:</strong> <span th:text="${userProfile.email}">Email</span></p>
 
-          <!-- Check if the logged-in user is the owner of the post -->
-          <div th:if="${post.author.username == loggedInUser.username}">
-            <button>Edit</button>
-            <button>Delete</button>
+      <!-- Display user's posts here -->
+      <h3 th:text="Posts"></h3>
+      <ul class="list-group">
+        <li th:each="post : ${userPostsPage.content}" class="list-group-item">
+          <a th:href="@{/post/{postId}(postId=${post.id})}">
+            <h5 class="list-group-item-heading" th:text="${post.title}">Post Title</h5>
+          </a>
+          <div class="post-content" th:attr="data-content='${post.content}'">
+            <span class="truncate-text" th:text="${post.content}"></span>
           </div>
         </li>
       </ul>
+
+      <!-- Pagination controls for user's posts -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li th:if="${userPostsPage.hasPrevious()}" class="page-item">
+            <a class="page-link" th:href="@{/myProfile/{userId}(userId=${userProfile.id},page=${userPostsPage.number - 1})}">Previous</a>
+          </li>
+          <li th:each="page : ${#numbers.sequence(0, userPostsPage.totalPages - 1)}" class="page-item">
+            <a class="page-link" th:href="@{/myProfile/{userId}(userId=${userProfile.id},page=${page})}" th:text="${page + 1}"></a>
+          </li>
+          <li th:if="${userPostsPage.hasNext()}" class="page-item">
+            <a class="page-link" th:href="@{/myProfile/{userId}(userId=${userProfile.id},page=${userPostsPage.number + 1})}">Next</a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </section>
 
-<!-- Pagination controls -->
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-md-12 text-center">
-      <ul class="pagination">
-        <li th:if="${postsPage.hasPrevious()}" class="page-item">
-          <a class="page-link" th:href="@{'/home?page=' + (postsPage.number - 1)}">Previous</a>
-        </li>
-        <li th:each="page : ${#numbers.sequence(0, postsPage.totalPages - 1)}" class="page-item">
-          <a class="page-link" th:href="@{'/home?page=' + page}" th:text="${page + 1}"></a>
-        </li>
-
-        <li th:if="${postsPage.hasNext()}" class="page-item">
-          <a class="page-link" th:href="@{'/home?page=' + (postsPage.number + 1)}">Next</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
+<!-- Include Bootstrap and JavaScript libraries -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
