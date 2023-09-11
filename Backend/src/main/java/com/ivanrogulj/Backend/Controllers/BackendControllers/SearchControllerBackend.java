@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/search")
-public class SearchController {
+public class SearchControllerBackend {
 
 
     private final UserService userService;
 
     private final PostService postService;
 
-    public SearchController(UserService userService, PostService postService) {
+    public SearchControllerBackend(UserService userService, PostService postService) {
         this.userService = userService;
         this.postService = postService;
     }

@@ -70,4 +70,12 @@ public class CommentController {
         return "comments";
     }
 
+    @PostMapping("/delete/{postId}/{commentId}")
+    public String deleteComment(@PathVariable Long commentId, @PathVariable Long postId)
+    {
+        commentService.getCommentById(commentId);
+        commentService.deleteComment(commentId);
+        return "redirect:/comment/view/" + postId;
+    }
+
 }

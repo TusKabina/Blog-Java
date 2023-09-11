@@ -43,7 +43,7 @@ public class HomeController {
         model.addAttribute("postsPage", postsPage);
         model.addAttribute("isAdmin",isAdmin);
 
-        return "home"; // This will render the "home.html" template
+        return "home";
     }
 
     @GetMapping("/profile/{userId}")
@@ -54,6 +54,7 @@ public class HomeController {
 
         boolean isAdmin = userService.isAdmin(loggedInUserDetails);
 
+        model.addAttribute("loggedInUser",loggedInUserDetails);
         model.addAttribute("userProfile", userProfile);
         model.addAttribute("userPostsPage", postsPage);
         model.addAttribute("isAdmin",isAdmin);
