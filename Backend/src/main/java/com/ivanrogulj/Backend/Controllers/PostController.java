@@ -61,7 +61,7 @@ public class PostController {
         model.addAttribute("categories", categories);
         return "updatePost"; // Create an "update-post.html" template for the update form
     }
-    @PutMapping("/post/update/{postId}")
+    @PostMapping("/post/update/{postId}")
     public String updatePost(@PathVariable Long postId, @ModelAttribute PostDTO updatedPost) {
 
         PostDTO postDb = postService.getPostById(postId);
