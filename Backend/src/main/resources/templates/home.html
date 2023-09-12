@@ -30,6 +30,9 @@
           <div class="post-content" th:attr="data-content='${post.content}'">
             <span class="truncate-text" th:text="${post.content}"></span>
           </div>
+          <p class="list-group-item-text">Date:
+            <em th:text="${#temporals.format(post.creationDate, 'dd.MM.yyyy HH:mm:ss')}">Sample Date</em>
+          </p>
         </li>
       </ul>
     </div>
@@ -37,18 +40,20 @@
 </section>
 <section class="container mt-4">
   <div class="row">
-    <div class="col-md-12 text-center">
-      <ul class="pagination">
-        <li th:if="${postsPage.hasPrevious()}" class="page-item">
-          <a class="page-link" th:href="@{/home(page=${postsPage.number - 1})}">Previous</a>
-        </li>
-        <li th:each="page : ${#numbers.sequence(0, postsPage.totalPages - 1)}" class="page-item">
-          <a class="page-link" th:href="@{/home(page=${page})}" th:text="${page + 1}"></a>
-        </li>
-        <li th:if="${postsPage.hasNext()}" class="page-item">
-          <a class="page-link" th:href="@{/home(page=${postsPage.number + 1})}">Next</a>
-        </li>
-      </ul>
+    <div th:if="${postsPage.totalPages > 1}">
+      <div class="col-md-12 text-center">
+        <ul class="pagination">
+          <li th:if="${postsPage.hasPrevious()}" class="page-item">
+            <a class="page-link" th:href="@{/home(page=${postsPage.number - 1})}">Previous</a>
+          </li>
+          <li th:each="page : ${#numbers.sequence(0, postsPage.totalPages - 1)}" class="page-item">
+            <a class="page-link" th:href="@{/home(page=${page})}" th:text="${page + 1}"></a>
+          </li>
+          <li th:if="${postsPage.hasNext()}" class="page-item">
+            <a class="page-link" th:href="@{/home(page=${postsPage.number + 1})}">Next</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>

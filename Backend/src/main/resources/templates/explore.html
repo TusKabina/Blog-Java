@@ -38,21 +38,26 @@
             <h5 class="list-group-item-heading" th:text="${post.title}">Post Title</h5>
           </a>
           <p th:text="${post.content}">Post Content</p>
+          <p class="list-group-item-text">Date:
+            <em th:text="${#temporals.format(post.creationDate, 'dd.MM.yyyy HH:mm:ss')}"></em>
+          </p>
         </li>
       </ul>
-      <nav aria-label="Page navigation">
-        <ul class="pagination">
-          <li th:if="${postsPage.hasPrevious()}" class="page-item">
-            <a class="page-link" th:href="@{/explore(page=${postsPage.number - 1}, category=${categoryId}, sortBy=${sortBy})}">Previous</a>
-          </li>
-          <li th:each="page : ${#numbers.sequence(0, postsPage.totalPages - 1)}" class="page-item">
-            <a class="page-link" th:href="@{/explore(page=${page}, category=${categoryId}, sortBy=${sortBy})}" th:text="${page + 1}"></a>
-          </li>
-          <li th:if="${postsPage.hasNext()}" class="page-item">
-            <a class="page-link" th:href="@{/explore(page=${postsPage.number + 1}, category=${categoryId}, sortBy=${sortBy})}">Next</a>
-          </li>
-        </ul>
-      </nav>
+      <div th:if="${postsPage.totalPages > 1}">
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li th:if="${postsPage.hasPrevious()}" class="page-item">
+              <a class="page-link" th:href="@{/explore(page=${postsPage.number - 1}, category=${categoryId}, sortBy=${sortBy})}">Previous</a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, postsPage.totalPages - 1)}" class="page-item">
+              <a class="page-link" th:href="@{/explore(page=${page}, category=${categoryId}, sortBy=${sortBy})}" th:text="${page + 1}"></a>
+            </li>
+            <li th:if="${postsPage.hasNext()}" class="page-item">
+              <a class="page-link" th:href="@{/explore(page=${postsPage.number + 1}, category=${categoryId}, sortBy=${sortBy})}">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </section>

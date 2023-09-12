@@ -12,7 +12,7 @@
   <div class="row mt-4">
     <div class="col-md-8">
       <h2 th:text="${userProfile.username}"></h2>
-      <p><strong>Full name:</strong> <span th:text="${userProfile.fullName}">Username</span></p>
+      <p><strong>Full name:</strong> <span th:text="${userProfile.fullName}">Full Name</span></p>
       <p><strong>Email:</strong> <span th:text="${userProfile.email}">Email</span></p>
       <h3 th:text="Posts"></h3>
       <ul class="list-group">
@@ -23,6 +23,9 @@
           <div class="post-content" th:attr="data-content='${post.content}'">
             <span class="truncate-text" th:text="${post.content}"></span>
           </div>
+          <p class="list-group-item-text">Date:
+            <em th:text="${#temporals.format(post.creationDate, 'dd.MM.yyyy HH:mm:ss')}">Sample Date</em>
+          </p>
         </li>
       </ul>
       <nav aria-label="Page navigation">

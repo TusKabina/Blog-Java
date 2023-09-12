@@ -16,6 +16,9 @@
           <h5 class="card-title"><strong th:text="${post.title}">Post Title</strong></h5>
           <p class="mb-2"><strong>Author:</strong> <a th:text="${post.author.fullName}" th:href="@{/profile/{userId}(userId=${post.author.id})}">Author Name</a></p>
           <p><strong>Category:</strong> <span th:text="${post.category.name}">Category Name</span></p>
+          <p class="list-group-item-text">Date:
+            <em th:text="${#temporals.format(post.creationDate, 'dd.MM.yyyy HH:mm:ss')}"></em>
+          </p>
           <div class="card">
             <div class="card-body">
               <h5 class="card-title"></h5>
