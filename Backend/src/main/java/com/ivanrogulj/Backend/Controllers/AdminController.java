@@ -71,7 +71,7 @@ public class AdminController {
     @PostMapping("/create-category")
     public String createCategory( @ModelAttribute CategoryDTO categoryDTO) {
         categoryService.createCategory(categoryDTO);
-        return "redirect:/admin/view-users";
+        return "redirect:/admin/view-categories";
     }
 
     @GetMapping("/update-category/{id}")
