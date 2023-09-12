@@ -14,7 +14,6 @@
       <h2 th:text="${userProfile.username}"></h2>
       <p><strong>Full name:</strong> <span th:text="${userProfile.fullName}">Full Name</span></p>
       <p><strong>Email:</strong> <span th:text="${userProfile.email}">Email</span></p>
-      <a class="btn btn-info" th:href="@{/comment/all-comments/{userId}(userId=${userProfile.id})}">View User Comments</a>
       <h3 th:text="Posts"></h3>
       <ul class="list-group">
         <li th:each="post : ${userPostsPage.content}" class="list-group-item">

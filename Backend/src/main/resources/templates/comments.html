@@ -21,7 +21,7 @@
           <p class="list-group-item-text">
             <em th:text="${#temporals.format(comment.creationDate, 'dd.MM.yyyy HH:mm:ss')}">Creation Date</em>
           </p>
-          <div th:if="${comment.user.id == loggedInUser.id || isAdmin || comment.user.id == loggedInUser.id}">
+          <div th:if="${loggedInUser.id == authorId || isAdmin || comment.user.id == loggedInUser.id}">
             <form th:action="@{/comment/delete/{postId}/{commentId}(postId=${postId}, commentId=${comment.id})}" method="post">
               <button type="submit" class="btn btn-danger">Delete Comment</button>
             </form>
