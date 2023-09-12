@@ -42,44 +42,6 @@ public class SecurityConfig  {
         this.userService = userService;
     }
 
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception
-//    {
-//         http.csrf().disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers(
-//                        "/register"
-//                ).permitAll()
-//                .requestMatchers("/api/**",
-//                         "/logout",
-//                         "/home",
-//                         "/post/**",
-//                         "/updatePost",
-//                         "/register",
-//                         "/post/*",
-//                         "/comment/**",
-//                         "comment/view",
-//                         "/comment/view/**",
-//                         "/explore",
-//                         "/profile/**",
-//                         "/search")
-//                .authenticated()
-//                .and()
-//                 .formLogin()
-//                 .loginPage("/login")
-//                 .defaultSuccessUrl("/home")
-//                 .permitAll()
-//                 .and()
-//                .logout()
-//                 .logoutSuccessUrl("/login?logout")
-//                 .permitAll()
-//                .deleteCookies("JSESSIONID");
-//
-//
-//         return http.build();
-//    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -107,26 +69,6 @@ public class SecurityConfig  {
         ;
         return http.build();
     }
-
-
-//    @Bean
-//    SecurityFilterChain web(HttpSecurity http) throws Exception {
-//        http
-//                // ...
-//                .httpBasic((basic) -> basic
-//                        .addObjectPostProcessor(new ObjectPostProcessor<BasicAuthenticationFilter>() {
-//                            @Override
-//                            public <O extends BasicAuthenticationFilter> O postProcess(O filter) {
-//                                filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
-//                                return filter;
-//                            }
-//                        })
-//                );
-//
-//        return http.build();
-//    }
-
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
