@@ -51,9 +51,14 @@ public class HomeController {
     @GetMapping("/profile/{userId}")
     public String userProfile(@PathVariable Long userId, Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
         UserDTO userProfile = userService.getUserById(userId);
-        Page<PostDTO> postsPage = postService.getPostsByUser(userProfile.getId(), PageRequest.of(page, 2));
         UserDTO loggedInUserDetails = userService.getLoggedInUser();
 
+        if(loggedInUserDetails.getId().equals(userId))
+        {
+            return "redirect:/home";
+        }
+
+        Page<PostDTO> postsPage = postService.getPostsByUser(userProfile.getId(), PageRequest.of(page, 2));
         boolean isAdmin = userService.isAdmin(loggedInUserDetails);
 
         model.addAttribute("loggedInUser",loggedInUserDetails);
