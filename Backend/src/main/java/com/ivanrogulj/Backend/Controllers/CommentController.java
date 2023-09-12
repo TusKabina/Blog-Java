@@ -71,11 +71,34 @@ public class CommentController {
     }
 
     @PostMapping("/delete/{postId}/{commentId}")
-    public String deleteComment(@PathVariable Long commentId, @PathVariable Long postId)
+    public String deleteCommentOfPost(@PathVariable Long commentId, @PathVariable Long postId)
     {
         commentService.getCommentById(commentId);
         commentService.deleteComment(commentId);
         return "redirect:/comment/view/" + postId;
+    }
+
+    @PostMapping("/delete/{commentId}")
+    public String deleteComment(@PathVariable Long commentId)
+    {
+        commentService.getCommentById(commentId);
+        commentService.deleteComment(commentId);
+        return "redirect:/home";
+    }
+
+
+
+    @GetMapping("/all-comments/{userId}")
+    public String getAllComments(@PathVariable Long userId, Model model, @RequestParam(defaultValue = "0") int page) {
+
+        Page<CommentDTO> commentsPage = commentService.getCommentsForUser(userId, PageRequest.of(page, 5));
+        UserDTO loggedInUserDetails = userService.getLoggedInUser();
+        boolean isAdmin = userService.isAdmin(loggedInUserDetails);
+        model.addAttribute("commentsPage", commentsPage);
+        model.addAttribute("loggedInUser", loggedInUserDetails);
+        model.addAttribute("isAdmin", isAdmin);
+
+        return "userComments"; // Return the name of your Thymeleaf template for displaying comments
     }
 
 }

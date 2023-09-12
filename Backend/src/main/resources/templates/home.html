@@ -15,6 +15,7 @@
       <p><strong>Full name:</strong> <span th:text="${loggedInUser.fullName}">Username</span></p>
       <p><strong>Email:</strong> <span th:text="${loggedInUser.email}">Email</span></p>
       <a class="btn btn-info" th:href="@{/update-user}">Update Information</a>
+      <a class="btn btn-info" th:href="@{/comment/all-comments/{userId}(userId=${loggedInUser.id})}">My Comments</a>
     </div>
   </div>
 </section>
@@ -31,7 +32,7 @@
             <span class="truncate-text" th:text="${post.content}"></span>
           </div>
           <p class="list-group-item-text">Date:
-            <em th:text="${#temporals.format(post.creationDate, 'dd.MM.yyyy HH:mm:ss')}">Sample Date</em>
+            <em th:text="${#temporals.format(post.creationDate, 'dd.MM.yyyy HH:mm:ss')}">Date</em>
           </p>
         </li>
       </ul>

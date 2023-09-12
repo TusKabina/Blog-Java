@@ -74,6 +74,12 @@ public class CommentService {
         return comments.map(dtoAssembler::convertToCommentDto);
     }
 
+    public Page<CommentDTO> getCommentsForUser(Long userId, Pageable pageable) {
+        Page<Comment> comments = commentRepository.findByUserId(userId,pageable);
+        return comments.map(dtoAssembler::convertToCommentDto);
+    }
+
+
     public CommentDTO getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment not found!"));
         return dtoAssembler.convertToCommentDto(comment);

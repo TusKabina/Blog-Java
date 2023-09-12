@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<header>
+  <div th:insert="fragments/header :: headerFragment"></div>
+</header>
+<section class="container mt-4">
+  <div class="row mt-4">
+    <div class="col-md-8">
+      <h2>User's Comments</h2>
+      <ul class="list-group">
+        <li th:each="comment : ${commentsPage.content}" class="list-group-item">
+          <div class="comment-content" th:text="${comment.content}"></div>
+          <p class="list-group-item-text">Date:
+            <em th:text="${#temporals.format(comment.creationDate, 'dd.MM.yyyy HH:mm:ss')}">Date</em>
+          </p>
+          <div th:if="${isAdmin or comment.user.id == loggedInUserId}">
+            <form th:action="@{/comment/delete/{commentId}(commentId=${comment.id})}" method="post" style="display: inline;">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+<section class="container mt-4">
+  <div class="row">
+    <div th:if="${commentsPage.totalPages > 1}">
+      <div class="col-md-12 text-center">
+        <ul class="pagination">
+          <li th:if="${commentsPage.hasPrevious()}" class="page-item">
+            <a class="page-link" th:href="@{/comment/all-comments/{userId}(userId=${loggedInUser.id}, page=${commentsPage.number - 1})}">Previous</a>
+          </li>
+          <li th:each="page : ${#numbers.sequence(0, commentsPage.totalPages - 1)}" class="page-item">
+            <a class="page-link" th:href="@{/comment/all-comments/{userId}(userId=${loggedInUser.id}, page=${page})}" th:text="${page + 1}"></a>
+          </li>
+          <li th:if="${commentsPage.hasNext()}" class="page-item">
+            <a class="page-link" th:href="@{/comment/all-comments/{userId}(userId=${loggedInUser.id}, page=${commentsPage.number + 1})}">Next</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</script>
+</body>
+</html>

@@ -52,6 +52,7 @@ public class PostService {
         return dtoAssembler.convertToPostDto(post);
     }
 
+
     public PostDTO getPostDtoById(Long id)
     {
         Post post = postRepository.findById(id).orElse(null);
