@@ -2,27 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Post Detail</title>
-  <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <header>
   <div th:insert="fragments/header :: headerFragment"></div>
 </header>
-
-
-
-<!-- Post Detail Section -->
 <section class="container mt-4">
   <div class="row">
     <div class="col-md-12">
-      <!-- Post Name and Category within Parent Box -->
       <div class="card">
         <div class="card-body">
           <h5 class="card-title"><strong th:text="${post.title}">Post Title</strong></h5>
           <p class="mb-2"><strong>Author:</strong> <a th:text="${post.author.fullName}" th:href="@{/profile/{userId}(userId=${post.author.id})}">Author Name</a></p>
           <p><strong>Category:</strong> <span th:text="${post.category.name}">Category Name</span></p>
-          <!-- Post Content Box -->
           <div class="card">
             <div class="card-body">
               <h5 class="card-title"></h5>
@@ -48,7 +41,6 @@
     <div class="row">
       <div class="col-md-12">
         <a th:href="@{/comment/create/{postId}(postId=${post.id})}" class="btn btn-success">Create Comment</a>
-        <!-- Add the "View Comments" button -->
         <a th:href="@{/comment/view/{postId}(postId=${post.id})}" class="btn btn-info">View Comments</a>
       </div>
     </div>

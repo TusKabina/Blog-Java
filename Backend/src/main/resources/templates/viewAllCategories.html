@@ -16,7 +16,6 @@
         <div class="card mb-3">
           <div class="card-body">
             <h5 class="card-title" th:text="${category.name}"></h5>
-            <!-- Here, we'll add a link to the update category form, passing the category ID in the URL -->
             <a th:href="@{/admin/update-category/{id}(id=${category.id})}" class="btn btn-primary">Update Category</a>
           </div>
         </div>
@@ -24,8 +23,6 @@
     </div>
   </div>
 </section>
-
-<!-- Include Bootstrap and JavaScript libraries -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

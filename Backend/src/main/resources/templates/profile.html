@@ -8,17 +8,12 @@
 <header>
   <div th:insert="fragments/header :: headerFragment"></div>
 </header>
-
-<!-- UserProfile Section -->
 <section class="container mt-4">
   <div class="row mt-4">
     <div class="col-md-8">
       <h2 th:text="${userProfile.username}"></h2>
-      <!-- Display user's information here -->
       <p><strong>Full name:</strong> <span th:text="${userProfile.fullName}">Username</span></p>
       <p><strong>Email:</strong> <span th:text="${userProfile.email}">Email</span></p>
-
-      <!-- Display user's posts here -->
       <h3 th:text="Posts"></h3>
       <ul class="list-group">
         <li th:each="post : ${userPostsPage.content}" class="list-group-item">
@@ -30,8 +25,6 @@
           </div>
         </li>
       </ul>
-
-      <!-- Pagination controls for user's posts -->
       <nav aria-label="Page navigation">
         <ul class="pagination">
           <li th:if="${userPostsPage.hasPrevious()}" class="page-item">
@@ -48,8 +41,6 @@
     </div>
   </div>
 </section>
-
-<!-- Include Bootstrap and JavaScript libraries -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

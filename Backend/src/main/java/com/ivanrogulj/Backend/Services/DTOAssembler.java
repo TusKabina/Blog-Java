@@ -98,6 +98,7 @@ public class DTOAssembler {
         postDTO.setAuthor(userDto);
         postDTO.setTitle(post.getTitle());
         postDTO.setContent(post.getContent());
+        postDTO.setCreationDate(post.getCreationDate());
 
         if(post.getCategory() != null)
         {
@@ -118,6 +119,7 @@ public class DTOAssembler {
 
         User author = convertDtoToUser(postDTO.getAuthor());
         post.setAuthor(author);
+        post.setCreationDate(postDTO.getCreationDate());
         if(postDTO.getCategory() != null)
         {
             Category category = convertDtoToCategory(postDTO.getCategory());

@@ -8,35 +8,23 @@
 <header>
   <div th:insert="fragments/header :: headerFragment"></div>
 </header>
-
-<!-- User Search Results Section -->
 <section class="container mt-4">
   <div class="row">
     <div class="col-md-8">
       <h2>User Search Results</h2>
-
-      <!-- Display the search query -->
       <p>Search results for: <strong th:text="${query}">Search Query</strong></p>
-
-      <!-- Display search results as a paginated list -->
       <ul class="list-group">
         <li th:each="user : ${users.content}" class="list-group-item">
-          <!-- Create a Bootstrap card for each user -->
           <div class="card mb-3">
             <div class="card-body">
-              <!-- Display user information -->
               <h5 class="card-title" th:text="${user.fullName}">User's Full Name</h5>
               <p class="card-text">Username: <span th:text="${user.username}">Username</span></p>
               <p class="card-text">Email: <span th:text="${user.email}">Email</span></p>
             </div>
-            <!-- Make the card clickable to redirect to the user's profile -->
             <a th:href="@{'/profile/' + ${user.id}}" class="stretched-link"></a>
           </div>
         </li>
       </ul>
-
-
-      <!-- Pagination controls for search results -->
       <nav aria-label="Page navigation">
         <ul class="pagination">
           <li th:if="${users.hasPrevious()}" class="page-item">
